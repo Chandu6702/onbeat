@@ -176,6 +176,9 @@ A stranger can open the URL, browse chords, run a change drill, play along to a 
 All five phases are done. The app runs, is tested, builds clean, and covers all three pillars
 (Learn, Practice, Create) with local progress. Run it with `npm run dev`.
 
+See **`IMPROVEMENTS.md`** for the research-backed post-v1 roadmap (hands-free/tuner/listen
+mode, more chords & strumming types, proper ordering, and customization), organized in tiers.
+
 **Suggested next steps (v2):**
 - Deploy to Vercel for a shareable URL.
 - Rename from the placeholder "Cadence".
