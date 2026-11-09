@@ -7,12 +7,13 @@ import type { StrumPattern } from "@/data/types";
 import { useProgress, useHasHydrated } from "@/state/progress";
 import Fretboard from "@/components/Fretboard";
 
+// Ordered by the research-backed path: drill each transition as you add chords.
 const CANDIDATE_PAIRS: [string, string][] = [
   ["Em", "Am"],
-  ["C", "G"],
-  ["G", "D"],
-  ["Am", "C"],
+  ["Am", "D"],
   ["D", "G"],
+  ["G", "C"],
+  ["Em", "C"],
 ];
 
 const DURATION = 60;

@@ -39,13 +39,17 @@ Reframing: the "tap a chord to hear it" button is only a *preview*. The real pro
 
 ## Tier 2 — more content + proper ordering
 
-- [ ] **More chords and chord *types*:** 7ths (G7, E7, A7, D7, B7), sus2/sus4, add9 (Cadd9),
-      m7 (Am7, Em7, Dm7), power chords (E5, A5), easier F options (Fmaj7, mini-F). Group by type.
-- [ ] **More strumming patterns/types:** 16th-note pop, offbeat/reggae, folk/Travis-style,
-      ballad arpeggio/fingerpicking, palm-muted rock, plus metronome-only. Tag Easy→Hard.
-- [ ] **Proper, research-backed order:** Em → Am → D → G → C; transitions matter more than
-      adding chords (better 4 smooth than 10 shaky). Em–C–G–D is the first real 4-chord loop.
-      Re-sequence the guided path and sort everything by difficulty consistently.
+- [x] **More chords and chord *types*:** Done — 27 chords grouped by type: 7ths (G7, E7, A7,
+      D7, B7), sus2/sus4, add9 (Cadd9), m7 (Am7, Em7, Dm7), power chords (E5, A5), easier F
+      (Fmaj7). Each with fingerings, tips, and mistakes. (`data/chords.ts`, `ChordLibrary`)
+- [x] **More strumming patterns/types:** Done — 8 patterns tagged Easy→Hard: 16th-note pop
+      (new 16th grid in the engine), offbeat/reggae, palm-muted rock, metronome-only, plus the
+      originals. _Still to do: Travis-style + true arpeggio/fingerpicking (needs per-string
+      plucking, a bigger engine change)._ (`data/patterns.ts`, `audio/engine.ts`)
+- [x] **Proper, research-backed order:** Done — guided path re-sequenced to Em → Am → D → G → C,
+      drilling each transition before adding the next chord; Em–C–G–D is the first real loop.
+      Change-drill pairs and library groups sorted by difficulty consistently. (`data/path.ts`,
+      `ChangeDrill`, `ChordLibrary`)
 
 ## Tier 3 — customization (currently "present only, no options")
 
