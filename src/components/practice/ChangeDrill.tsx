@@ -51,6 +51,12 @@ export default function ChangeDrill() {
   const [pair, setPair] = useState<[string, string]>(pairs[0] ?? ["Em", "Am"]);
   const [bpm, setBpm] = useState(80);
 
+  // Custom drill: pick any two of your known chords.
+  const [custom, setCustom] = useState(false);
+  const [cA, setCA] = useState<string>(pairs[0]?.[0] ?? known[0] ?? "Em");
+  const [cB, setCB] = useState<string>(pairs[0]?.[1] ?? known[1] ?? "Am");
+  const activePair: [string, string] = custom ? [cA, cB] : pair;
+
   const [running, setRunning] = useState(false);
   const [left, setLeft] = useState(DURATION);
   const [trainer, setTrainer] = useState(false);
@@ -135,7 +141,7 @@ export default function ChangeDrill() {
     finished.current = false;
     runFinalCount.current = finalCount;
     setEngineBpm(bpm);
-    setContent(pair, DRILL_PATTERN);
+    setContent(activePair, DRILL_PATTERN);
     setRunning(true);
     play();
   };
@@ -165,7 +171,7 @@ export default function ChangeDrill() {
     setResult(null);
   };
 
-  const activeIsSecond = running && !ui.isCountIn && ui.chord === pair[1];
+  const activeIsSecond = running && !ui.isCountIn && ui.chord === activePair[1];
   const elapsed = DURATION - left;
   const liveCount = running && !ui.isCountIn ? Math.min(finalCount, Math.floor((elapsed * finalCount) / DURATION)) : 0;
   const shownCount = result ? result.count : liveCount;
@@ -175,11 +181,15 @@ export default function ChangeDrill() {
     <div className="text-center">
       <div className="mb-4 flex flex-wrap justify-center gap-2">
         {pairs.map((p) => {
-          const on = p[0] === pair[0] && p[1] === pair[1];
+          const on = !custom && p[0] === pair[0] && p[1] === pair[1];
           return (
             <button
               key={p.join("-")}
-              onClick={() => !running && setPair(p)}
+              onClick={() => {
+                if (running) return;
+                setCustom(false);
+                setPair(p);
+              }}
               className={`rounded-full border px-3 py-1.5 text-[12.5px] font-semibold ${
                 on ? "border-accent bg-panel-2 text-fg" : "border-line bg-panel text-muted"
               } ${running ? "opacity-50" : ""}`}
@@ -188,7 +198,47 @@ export default function ChangeDrill() {
             </button>
           );
         })}
+        <button
+          onClick={() => !running && setCustom(true)}
+          className={`rounded-full border px-3 py-1.5 text-[12.5px] font-semibold ${
+            custom ? "border-accent bg-panel-2 text-fg" : "border-line bg-panel text-muted"
+          } ${running ? "opacity-50" : ""}`}
+        >
+          ＋ Custom
+        </button>
       </div>
+
+      {custom && !running && (
+        <div className="mb-4 rounded-2xl border border-line bg-panel p-3.5 text-left">
+          <p className="mb-2 text-[12px] font-semibold text-muted">Pick two chords to drill</p>
+          {(
+            [
+              ["First", cA, setCA] as const,
+              ["Second", cB, setCB] as const,
+            ]
+          ).map(([label, value, setter]) => (
+            <div key={label} className="mb-2 last:mb-0">
+              <div className="mb-1 text-[11px] uppercase tracking-[0.08em] text-faint">{label}</div>
+              <div className="flex flex-wrap gap-1.5">
+                {known.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setter(c)}
+                    className={`rounded-lg border px-2.5 py-1 font-display text-[13px] font-bold ${
+                      value === c ? "border-accent-2 bg-accent text-white" : "border-line bg-panel-2 text-muted"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+          {cA === cB && (
+            <p className="mt-1 text-[12px] font-medium text-pink">Pick two different chords.</p>
+          )}
+        </div>
+      )}
 
       <div className="font-display text-[15px] font-semibold text-beat">
         {running ? (ui.isCountIn ? "get ready…" : `${left}s`) : result ? "Done!" : `${DURATION}s`}
@@ -199,11 +249,11 @@ export default function ChangeDrill() {
       <div className="text-[13px] text-muted">changes played</div>
 
       <div className="my-5 flex items-start justify-center gap-6">
-        {pair.map((c, idx) => {
+        {activePair.map((c, idx) => {
           const active = running && !ui.isCountIn && (idx === 1 ? activeIsSecond : !activeIsSecond);
           const chord = getChord(c);
           return (
-            <div key={c} className={`transition-opacity ${running && !ui.isCountIn && !active ? "opacity-35" : ""}`}>
+            <div key={idx} className={`transition-opacity ${running && !ui.isCountIn && !active ? "opacity-35" : ""}`}>
               <div className={`font-display text-[30px] font-bold ${active ? "text-accent-2" : ""}`}>{c}</div>
               {chord && (
                 <div className="mt-1 flex justify-center">
@@ -217,7 +267,8 @@ export default function ChangeDrill() {
 
       <button
         onClick={running ? cancel : start}
-        className={`w-full rounded-[18px] py-6 font-display text-[20px] font-bold transition-transform active:scale-[0.98] ${
+        disabled={!running && activePair[0] === activePair[1]}
+        className={`w-full rounded-[18px] py-6 font-display text-[20px] font-bold transition-transform active:scale-[0.98] disabled:opacity-40 ${
           running ? "bg-panel-2 text-fg" : "bg-go text-[#06231a]"
         }`}
       >
