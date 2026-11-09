@@ -6,6 +6,10 @@ import {
   noteName,
   nearestGuitarString,
   autoCorrelate,
+  pitchClass,
+  chordPitchClasses,
+  detectPitchClasses,
+  chordCoverage,
 } from "./pitch";
 
 describe("pitch math", () => {
@@ -47,5 +51,43 @@ describe("autoCorrelate", () => {
 
   it("returns -1 for silence", () => {
     expect(autoCorrelate(new Float32Array(2048), 44100)).toBe(-1);
+  });
+});
+
+describe("chord detection", () => {
+  it("maps frequencies to pitch classes", () => {
+    expect(pitchClass(440)).toBe(9); // A
+    expect(pitchClass(261.63)).toBe(0); // C4
+  });
+
+  it("derives a chord's pitch classes from MIDI", () => {
+    // C major triad C(60) E(64) G(67) → 0, 4, 7
+    expect(chordPitchClasses([60, 64, 67]).sort((a, b) => a - b)).toEqual([0, 4, 7]);
+    // With octave doublings it stays unique
+    expect(chordPitchClasses([48, 60, 64, 67, 72]).sort((a, b) => a - b)).toEqual([0, 4, 7]);
+  });
+
+  it("detects the pitch classes of peaks in a spectrum", () => {
+    const sampleRate = 44100;
+    const bins = 4096;
+    const binHz = sampleRate / 2 / bins;
+    const spec = new Float32Array(bins).fill(-100);
+    // Put strong peaks at ~C4, E4, G4 (a C major triad).
+    for (const f of [261.63, 329.63, 392.0]) {
+      const i = Math.round(f / binHz);
+      spec[i] = -20;
+      spec[i - 1] = -40;
+      spec[i + 1] = -40;
+    }
+    const detected = detectPitchClasses(spec, sampleRate);
+    expect(detected.has(0)).toBe(true); // C
+    expect(detected.has(4)).toBe(true); // E
+    expect(detected.has(7)).toBe(true); // G
+  });
+
+  it("scores chord coverage", () => {
+    expect(chordCoverage(new Set([0, 4, 7]), [0, 4, 7])).toBe(1);
+    expect(chordCoverage(new Set([0, 7]), [0, 4, 7])).toBeCloseTo(2 / 3, 5);
+    expect(chordCoverage(new Set([1, 2]), [0, 4, 7])).toBe(0);
   });
 });

@@ -101,10 +101,14 @@ beginner theory order ([National Guitar Academy](https://nationalguitaracademy.c
 - [ ] Clearer empty/finished states, richer copy, a sound-on prompt.
 - [ ] Deploy to a live URL; rename from the placeholder "Cadence."
 
-## Marquee (bigger, later): Listen mode
+## Marquee: Listen mode ✅ v1
 
-Mic detects whether you're playing the right chord in time and auto-advances / scores you —
-the feature that makes the whole app truly hands-free. Do after Tier 1, as its own batch.
+Done: `/listen` — the app counts you in and keeps time (metronome only), you play the chords,
+and the mic scores each bar via polyphonic peak-picking (`audio/pitch.ts`:
+`detectPitchClasses` / `chordCoverage`, unit-tested). Auto-advancing and hands-free; shows a
+live match meter and a per-bar score. _Refinements:_ click bleed can inflate scores (best with
+headphones); could add HPS/CQT for sharper detection and mic-driven auto-count. Needs real-mic
+tuning (the dev browser pane blocks the mic, so only the logic + UI are verified here).
 
 ## Suggested first batch ("Play like you mean it")
 

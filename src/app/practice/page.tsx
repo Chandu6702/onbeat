@@ -82,6 +82,22 @@ function PracticeInner() {
               </span>
             </button>
           ))}
+
+          <Link
+            href="/listen"
+            className="flex w-full items-center gap-3.5 rounded-2xl border border-accent/50 bg-gradient-to-br from-[#1c1a38] to-[#141726] p-4 text-left transition-colors hover:border-accent"
+          >
+            <div className="grid h-12 w-12 flex-none place-items-center rounded-[13px] bg-accent/15 text-[23px]">
+              👂
+            </div>
+            <div className="min-w-0">
+              <div className="text-[15px] font-semibold">Listen mode</div>
+              <div className="mt-0.5 text-[12.5px] leading-snug text-muted">
+                It listens while you play and scores you. Hands-free.
+              </div>
+            </div>
+            <span className="ml-auto text-[10.5px] font-bold uppercase text-accent-2">New</span>
+          </Link>
         </div>
 
         <p className="mb-2 mt-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">

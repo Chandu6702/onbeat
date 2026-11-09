@@ -99,6 +99,63 @@ export const GUITAR_STRINGS = [
   { midi: 64, label: "E", octave: "high E" },
 ];
 
+// ── Chord listening (polyphonic) ─────────────────────────────────────────
+// Full polyphonic chord recognition is hard; this is a pragmatic peak-picking
+// approach: from an FFT magnitude spectrum, take the strongest peaks in the
+// guitar's range, fold them to pitch classes, and measure how many of the
+// target chord's notes are present. Good enough to tell "right chord vs not".
+
+/** Pitch class (0–11, C=0) for a frequency. */
+export function pitchClass(freq: number): number {
+  return ((noteFromPitch(freq) % 12) + 12) % 12;
+}
+
+/** The distinct pitch classes a chord contains, from its MIDI notes. */
+export function chordPitchClasses(midi: number[]): number[] {
+  return [...new Set(midi.map((m) => ((m % 12) + 12) % 12))];
+}
+
+/**
+ * Strong pitch classes present in an FFT magnitude spectrum (dB values, as from
+ * AnalyserNode.getFloatFrequencyData). Picks local-maxima peaks above a floor
+ * within a guitar-friendly band, keeps the loudest, and folds them to classes.
+ */
+export function detectPitchClasses(
+  freqDb: Float32Array,
+  sampleRate: number,
+  opts: { floorDb?: number; maxPeaks?: number; minHz?: number; maxHz?: number } = {},
+): Set<number> {
+  const { floorDb = -70, maxPeaks = 8, minHz = 70, maxHz = 1200 } = opts;
+  const bins = freqDb.length;
+  const binHz = sampleRate / 2 / bins;
+  const peaks: { freq: number; v: number }[] = [];
+  for (let i = 2; i < bins - 2; i++) {
+    const v = freqDb[i];
+    if (
+      v > floorDb &&
+      v > freqDb[i - 1] &&
+      v >= freqDb[i + 1] &&
+      v > freqDb[i - 2] &&
+      v >= freqDb[i + 2]
+    ) {
+      const freq = i * binHz;
+      if (freq >= minHz && freq <= maxHz) peaks.push({ freq, v });
+    }
+  }
+  peaks.sort((a, b) => b.v - a.v);
+  const classes = new Set<number>();
+  for (const p of peaks.slice(0, maxPeaks)) classes.add(pitchClass(p.freq));
+  return classes;
+}
+
+/** Fraction (0–1) of a chord's notes detected — the match score. */
+export function chordCoverage(detected: Set<number>, expected: number[]): number {
+  if (expected.length === 0) return 0;
+  let hit = 0;
+  for (const pc of expected) if (detected.has(pc)) hit++;
+  return hit / expected.length;
+}
+
 /** The standard-tuning guitar string closest to a frequency. */
 export function nearestGuitarString(freq: number) {
   const midi = noteFromPitch(freq);
