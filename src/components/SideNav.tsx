@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useProgress, useHasHydrated } from "@/state/progress";
+import BrandMark from "./BrandMark";
 import { NAV_ITEMS, NavIcon } from "./nav-items";
 
 export default function SideNav() {
@@ -14,9 +15,7 @@ export default function SideNav() {
   return (
     <aside className="sticky top-0 hidden h-dvh w-[240px] flex-none flex-col border-r border-line bg-ink px-4 py-6 md:flex">
       <div className="mb-8 flex items-center gap-2.5 px-2">
-        <div className="grid h-[38px] w-[38px] place-items-center rounded-xl bg-gradient-to-br from-accent to-pink font-display text-lg font-bold text-white">
-          O
-        </div>
+        <BrandMark className="h-[38px] w-[38px] rounded-xl" />
         <div>
           <b className="block font-display text-[17px] font-semibold tracking-tight">Onbeat</b>
           <span className="block text-[11px] text-faint">Practice studio</span>

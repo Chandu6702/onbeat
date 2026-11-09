@@ -87,7 +87,6 @@ function PracticeInner() {
                 It listens while you play and scores you. Hands-free.
               </div>
             </div>
-            <span className="ml-auto text-[10.5px] font-bold uppercase text-accent-2">New</span>
           </Link>
         </div>
 

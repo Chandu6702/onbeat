@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CHORDS } from "@/data/chords";
 import Fretboard from "@/components/Fretboard";
+import BrandMark from "@/components/BrandMark";
 import { useProgress, useHasHydrated, type PracticeGoal } from "@/state/progress";
 
 const ALL_CHORDS = Object.keys(CHORDS);
@@ -46,9 +47,7 @@ export default function Onboarding() {
 
         {step === 0 && (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <div className="grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-accent to-pink font-display text-3xl font-bold text-white">
-              O
-            </div>
+            <BrandMark className="h-16 w-16 rounded-2xl" />
             <h1 className="mt-5 font-display text-[26px] font-bold">Welcome to Onbeat</h1>
             <p className="mt-3 max-w-[40ch] text-[14px] leading-relaxed text-muted">
               Your hands-free guitar practice partner. Once the guitar&apos;s in your hands you
