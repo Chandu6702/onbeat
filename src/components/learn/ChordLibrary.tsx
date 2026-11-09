@@ -26,9 +26,9 @@ const TYPE_LABEL: Record<string, string> = {
   Power: "Power chords",
 };
 
-export default function ChordLibrary() {
+export default function ChordLibrary({ initialChord }: { initialChord?: string }) {
   const [diff, setDiff] = useState<Difficulty | "all">("all");
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(initialChord ?? null);
 
   if (selected) {
     return <ChordDetail name={selected} onBack={() => setSelected(null)} />;

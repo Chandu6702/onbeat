@@ -1,18 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import ChordLibrary from "@/components/learn/ChordLibrary";
 import PatternList from "@/components/learn/PatternList";
 import GenreList from "@/components/learn/GenreList";
-import GuidePath from "@/components/learn/GuidePath";
+import CurriculumView from "@/components/learn/CurriculumView";
 
-type View = "guide" | "browse";
+type View = "path" | "browse";
 type Tab = "chords" | "strumming" | "genres";
 
-export default function LearnPage() {
-  const [view, setView] = useState<View>("guide");
+function LearnInner() {
+  const params = useSearchParams();
+  const initialChord = params.get("chord") ?? undefined;
+  const [view, setView] = useState<View>("path");
   const [tab, setTab] = useState<Tab>("chords");
+
+  // A ?chord= deep-link jumps straight to the chord in the browse library
+  // (applied after mount to avoid an SSR/client hydration mismatch).
+  useEffect(() => {
+    if (initialChord) {
+      setView("browse");
+      setTab("chords");
+    }
+  }, [initialChord]);
 
   return (
     <>
@@ -39,32 +51,36 @@ export default function LearnPage() {
         <span className="ml-auto text-accent-2">→</span>
       </Link>
 
-      {/* Guide me / Browse */}
+      {/* Path (modules) / Browse (library) */}
       <div className="flex gap-1 rounded-xl border border-line bg-panel p-1">
-        {(["guide", "browse"] as View[]).map((v) => (
+        {(
+          [
+            { id: "path", label: "Learn path" },
+            { id: "browse", label: "Browse library" },
+          ] as { id: View; label: string }[]
+        ).map((v) => (
           <button
-            key={v}
-            onClick={() => setView(v)}
+            key={v.id}
+            onClick={() => setView(v.id)}
             className={`flex-1 rounded-lg py-2.5 text-[13px] font-semibold transition-colors ${
-              view === v ? "bg-accent text-white" : "text-muted"
+              view === v.id ? "bg-accent text-white" : "text-muted"
             }`}
           >
-            {v === "guide" ? "Guide me" : "Browse"}
+            {v.label}
           </button>
         ))}
       </div>
 
-      {view === "guide" ? (
+      {view === "path" ? (
         <div className="mt-4">
           <p className="mb-4 text-[13px] leading-relaxed text-muted">
-            A suggested path — start at the top and work down. Nothing is locked; jump to anything,
-            anytime.
+            A guided path in three levels — each mixes chords, strumming, theory, and practice.
+            Nothing is locked; jump in anywhere.
           </p>
-          <GuidePath />
+          <CurriculumView />
         </div>
       ) : (
         <div className="mt-4">
-          {/* type tabs */}
           <div className="mb-4 flex gap-2">
             {(
               [
@@ -85,11 +101,19 @@ export default function LearnPage() {
             ))}
           </div>
 
-          {tab === "chords" && <ChordLibrary />}
+          {tab === "chords" && <ChordLibrary initialChord={initialChord} />}
           {tab === "strumming" && <PatternList />}
           {tab === "genres" && <GenreList />}
         </div>
       )}
     </>
+  );
+}
+
+export default function LearnPage() {
+  return (
+    <Suspense fallback={<div className="text-muted">Loading…</div>}>
+      <LearnInner />
+    </Suspense>
   );
 }

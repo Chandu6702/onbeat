@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { usePracticeEngine } from "@/audio/usePracticeEngine";
 import { getPattern } from "@/data/patterns";
 import { THEORY, type TheoryLesson, type TheoryModule } from "@/data/theory";
@@ -121,8 +122,14 @@ function LessonView({
   );
 }
 
-export default function TheoryPage() {
+function TheoryInner() {
+  const params = useSearchParams();
+  const lessonParam = params.get("lesson");
   const [openId, setOpenId] = useState<string | null>(null);
+  // Apply a ?lesson= deep-link after mount (avoids an SSR/client mismatch).
+  useEffect(() => {
+    if (lessonParam) setOpenId(lessonParam);
+  }, [lessonParam]);
 
   if (openId) {
     for (const m of THEORY) {
@@ -168,5 +175,13 @@ export default function TheoryPage() {
         ))}
       </div>
     </>
+  );
+}
+
+export default function TheoryPage() {
+  return (
+    <Suspense fallback={<div className="text-muted">Loading…</div>}>
+      <TheoryInner />
+    </Suspense>
   );
 }
