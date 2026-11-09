@@ -76,9 +76,9 @@ function PracticeInner() {
 
           <Link
             href="/listen"
-            className="flex w-full items-center gap-3.5 rounded-2xl border border-accent/50 bg-gradient-to-br from-[#1c1a38] to-[#141726] p-4 text-left transition-colors hover:border-accent"
+            className="flex w-full items-center gap-3.5 rounded-2xl border border-line bg-panel p-4 text-left transition-colors hover:border-accent"
           >
-            <div className="grid h-12 w-12 flex-none place-items-center rounded-[13px] bg-accent/15 text-[23px]">
+            <div className="grid h-12 w-12 flex-none place-items-center rounded-[13px] bg-gradient-to-br from-[#221f3d] to-[#191c2b] text-[23px]">
               👂
             </div>
             <div className="min-w-0">
