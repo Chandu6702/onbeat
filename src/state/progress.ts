@@ -25,6 +25,8 @@ interface ProgressState {
   creations: Creation[];
   onboarded: boolean;
   goal: PracticeGoal | null;
+  completedLessons: string[]; // theory lesson ids
+  sessions: number; // total practice sessions started
 
   addXp: (n: number) => void;
   recordPractice: () => void;
@@ -32,6 +34,7 @@ interface ProgressState {
   toggleKnownChord: (name: string) => void;
   addCreation: (c: Creation) => void;
   completeOnboarding: (chords: string[], goal: PracticeGoal | null) => void;
+  markLessonDone: (id: string) => void;
 }
 
 function todayStr(): string {
@@ -56,10 +59,13 @@ export const useProgress = create<ProgressState>()(
       creations: [],
       onboarded: false,
       goal: null,
+      completedLessons: [],
+      sessions: 0,
 
       addXp: (n) => set((s) => ({ xp: s.xp + n })),
 
       recordPractice: () => {
+        set((s) => ({ sessions: s.sessions + 1 }));
         const today = todayStr();
         const last = get().lastPracticeDate;
         if (last === today) return;
@@ -89,6 +95,13 @@ export const useProgress = create<ProgressState>()(
 
       addCreation: (c) => set((s) => ({ creations: [c, ...s.creations] })),
 
+      markLessonDone: (id) =>
+        set((s) =>
+          s.completedLessons.includes(id)
+            ? s
+            : { completedLessons: [...s.completedLessons, id] },
+        ),
+
       completeOnboarding: (chords, goal) =>
         set({
           knownChords: chords.length > 0 ? chords : ["Em", "Am", "C", "G"],
@@ -98,12 +111,18 @@ export const useProgress = create<ProgressState>()(
     }),
     {
       name: "cadence-progress",
-      version: 2,
-      // v1 users already have progress — don't show them onboarding.
+      version: 3,
       migrate: (persisted, version) => {
         const state = persisted as Partial<ProgressState>;
+        // v1 users already have progress — don't show them onboarding.
         if (version < 2) {
-          return { ...state, onboarded: true, goal: state.goal ?? null };
+          state.onboarded = true;
+          state.goal = state.goal ?? null;
+        }
+        // v3 adds the level-system fields.
+        if (version < 3) {
+          state.completedLessons = state.completedLessons ?? [];
+          state.sessions = state.sessions ?? 0;
         }
         return state;
       },

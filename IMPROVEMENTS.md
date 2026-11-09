@@ -79,9 +79,10 @@ Audit (2026-09): the app is feature-complete but has production gaps. In priorit
 2. **Music Theory track** ("GeeksforGeeks for music") — a `/theory` section, research-backed order
    **Intervals → Scales → Triads → Diatonic progressions → Ear training**, each lesson a short
    explainer + audio + a quick self-check. Fills a real gap (we only have chord/pattern data today).
-3. **Real level system** — today "Level 1/2/3" is just XP thresholds. Replace with modules/levels
-   that track completion and gate suggestions (never hard-lock), tying Learn + Practice + Theory
-   into one curriculum.
+3. **Real level system** — _Done._ Five levels (First strings → Musician), each completed by real
+   milestones drawn from Learn + Practice + Theory (chords known, changes/min, streak, saved loops,
+   theory modules finished, sessions logged). A `/journey` page shows the ladder; Profile shows the
+   computed level. Nothing is hard-locked. (`data/levels.ts`, `app/journey/page.tsx`)
 4. **Ear training + Listen mode** — mic scores whether you played the right chord/interval in time
    (reuses the tuner's mic setup). The true hands-free payoff.
 5. **Backend + accounts** — move progress off localStorage to real sync (Supabase or Next API +

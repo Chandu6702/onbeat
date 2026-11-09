@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePracticeEngine } from "@/audio/usePracticeEngine";
 import { getPattern } from "@/data/patterns";
 import { THEORY, type TheoryLesson, type TheoryModule } from "@/data/theory";
+import { useProgress } from "@/state/progress";
 
 function LessonBody({ body }: { body: string[] }) {
   return (
@@ -43,6 +44,10 @@ function LessonView({
     countInBars: 0,
   });
   const [revealed, setRevealed] = useState(false);
+  const markLessonDone = useProgress((s) => s.markLessonDone);
+
+  // Reading a lesson counts as completing it (feeds the level system).
+  useEffect(() => markLessonDone(lesson.id), [lesson.id, markLessonDone]);
 
   return (
     <div>

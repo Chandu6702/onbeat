@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useProgress, useHasHydrated } from "@/state/progress";
+import { levelStatus, type LevelProgress } from "@/data/levels";
 
 function Stat({ n, label, color }: { n: string | number; label: string; color?: string }) {
   return (
@@ -16,9 +17,20 @@ function Stat({ n, label, color }: { n: string | number; label: string; color?: 
 
 export default function ProfilePage() {
   const hydrated = useHasHydrated();
-  const { xp, streak, bestChangesPerMin, knownChords } = useProgress();
+  const s = useProgress();
+  const { xp, streak, bestChangesPerMin, knownChords } = s;
 
   const show = (v: number) => (hydrated ? v : 0);
+
+  const lp: LevelProgress = {
+    knownChords: hydrated ? knownChords : [],
+    bestChangesPerMin: show(bestChangesPerMin),
+    creations: hydrated ? s.creations.length : 0,
+    streak: show(streak),
+    sessions: hydrated ? s.sessions : 0,
+    completedLessons: hydrated ? s.completedLessons : [],
+  };
+  const level = levelStatus(lp);
 
   return (
     <>
@@ -31,9 +43,11 @@ export default function ProfilePage() {
             🎸
           </div>
           <div>
-            <div className="font-display text-[18px] font-bold">Guitar learner</div>
+            <div className="font-display text-[18px] font-bold">
+              Level {level.currentLevelNumber} · {level.current.name}
+            </div>
             <div className="text-[13px] text-muted">
-              {show(xp) >= 1000 ? "Level 3 · Advancing" : show(xp) >= 300 ? "Level 2 · Getting there" : "Level 1 · Just starting"}
+              {level.current.doneCount}/{level.current.total} milestones · {level.current.tagline}
             </div>
           </div>
         </div>
@@ -61,6 +75,19 @@ export default function ProfilePage() {
       </div>
 
       <div className="mt-6 flex flex-col gap-2.5">
+        <Link
+          href="/journey"
+          className="flex items-center gap-3.5 rounded-2xl border border-accent/40 bg-gradient-to-br from-[#1a1836] to-[#141726] p-4 transition hover:border-accent"
+        >
+          <span className="text-xl">🧭</span>
+          <div className="min-w-0">
+            <div className="text-[14.5px] font-semibold">Your journey</div>
+            <div className="text-[12.5px] text-muted">
+              Level {level.currentLevelNumber}/5 · {level.current.doneCount}/{level.current.total} milestones
+            </div>
+          </div>
+          <span className="ml-auto text-accent-2">→</span>
+        </Link>
         <Link
           href="/settings"
           className="flex items-center gap-3.5 rounded-2xl border border-line bg-panel p-4 transition-colors hover:border-accent"
