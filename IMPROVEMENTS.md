@@ -87,10 +87,16 @@ Audit (2026-09): the app is feature-complete but has production gaps. In priorit
    computed level. Nothing is hard-locked. (`data/levels.ts`, `app/journey/page.tsx`)
 4. **Ear training + Listen mode** — mic scores whether you played the right chord/interval in time
    (reuses the tuner's mic setup). The true hands-free payoff.
-5. **Backend + accounts** — move progress off localStorage to real sync (Supabase or Next API +
-   Postgres), so progress survives a browser clear and follows the user across devices.
-6. **Deploy + rename + test coverage** — ship to a URL, drop the "Cadence" placeholder, add
-   component/e2e tests beyond the pure-logic units.
+5. **Backend + accounts** — move progress off localStorage to real sync (Supabase free tier), so
+   progress survives a browser clear and follows the user across devices. **Planned in detail in
+   `DEPLOYMENT.md` (Phase 2)** — schema, RLS, local-first sync, and migration.
+6. **Deploy + rename + test coverage** — ship to a URL (free; **`DEPLOYMENT.md` Phase 1** — the
+   app is fully static, so Vercel/Render/Cloudflare Pages all work for $0), drop the "Cadence"
+   placeholder, add component/e2e tests beyond the pure-logic units.
+
+_Data hygiene (2026-10): new users now start from a true zero state — no pre-seeded "known"
+chords, so Learn/Profile/Journey show real progress only. Dead modules (`data/path.ts`,
+`GuidePath.tsx`) removed; lint is clean._
 
 Research sources: browser guitar synthesis vs sampling (Tone.js docs; tonejs-instruments);
 web-audio amp/cabinet & acoustic sim ([bobrov.dev](https://bobrov.dev/blog/web-audio-for-electric-guitar-cabinet-emulation/));
