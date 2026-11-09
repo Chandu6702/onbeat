@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { usePracticeEngine } from "@/audio/usePracticeEngine";
 import { getPattern } from "@/data/patterns";
 import { THEORY, type TheoryLesson, type TheoryModule } from "@/data/theory";
-import { useProgress } from "@/state/progress";
+import { useProgress, useHasHydrated } from "@/state/progress";
 
 function LessonBody({ body }: { body: string[] }) {
   return (
@@ -125,6 +125,9 @@ function LessonView({
 function TheoryInner() {
   const params = useSearchParams();
   const lessonParam = params.get("lesson");
+  const hydrated = useHasHydrated();
+  const completedLessons = useProgress((s) => s.completedLessons);
+  const isDone = (id: string) => hydrated && completedLessons.includes(id);
   const [openId, setOpenId] = useState<string | null>(null);
   // Apply a ?lesson= deep-link after mount (avoids an SSR/client mismatch).
   useEffect(() => {
@@ -149,30 +152,42 @@ function TheoryInner() {
       </p>
 
       <div className="mt-5 flex flex-col gap-6">
-        {THEORY.map((m, mi) => (
+        {THEORY.map((m, mi) => {
+          const read = m.lessons.filter((l) => isDone(l.id)).length;
+          return (
           <section key={m.id}>
             <div className="flex items-baseline gap-2">
               <span className="font-display text-[15px] font-bold text-accent-2">{mi + 1}</span>
               <h2 className="font-display text-[17px] font-semibold">{m.name}</h2>
+              {read > 0 && (
+                <span className="ml-auto text-[11.5px] text-faint">{read}/{m.lessons.length} read</span>
+              )}
             </div>
             <p className="mt-0.5 text-[12.5px] text-muted">{m.blurb}</p>
             <div className="mt-3 flex flex-col gap-2">
-              {m.lessons.map((l) => (
-                <button
-                  key={l.id}
-                  onClick={() => setOpenId(l.id)}
-                  className="flex items-center gap-3 rounded-[11px] border border-line bg-panel p-3.5 text-left transition-colors hover:border-accent"
-                >
-                  <div className="min-w-0">
-                    <div className="text-[14px] font-semibold">{l.title}</div>
-                    <div className="text-[12px] text-muted">{l.minutes} min</div>
-                  </div>
-                  <span className="ml-auto text-accent-2">→</span>
-                </button>
-              ))}
+              {m.lessons.map((l) => {
+                const done = isDone(l.id);
+                return (
+                  <button
+                    key={l.id}
+                    onClick={() => setOpenId(l.id)}
+                    className="flex items-center gap-3 rounded-[11px] border border-line bg-panel p-3.5 text-left transition-colors hover:border-accent"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[14px] font-semibold">{l.title}</span>
+                        {done && <span className="text-[11px] text-go">✓ done</span>}
+                      </div>
+                      <div className="text-[12px] text-muted">{l.minutes} min</div>
+                    </div>
+                    <span className="ml-auto text-accent-2">→</span>
+                  </button>
+                );
+              })}
             </div>
           </section>
-        ))}
+          );
+        })}
       </div>
     </>
   );
