@@ -46,6 +46,7 @@ export default function ChangeDrill() {
   const countInPref = useSettings((s) => s.countIn);
   const metroVol = useSettings((s) => s.metronomeVolume);
   const transpose = useSettings((s) => s.transpose);
+  const instrument = useSettings((s) => s.instrument);
 
   const pairs = CANDIDATE_PAIRS.filter((p) => p.every((c) => known.includes(c)));
   const [pair, setPair] = useState<[string, string]>(pairs[0] ?? ["Em", "Am"]);
@@ -82,6 +83,7 @@ export default function ChangeDrill() {
     setMetronomeVolume,
     setCountIn,
     setTranspose,
+    setInstrument,
   } = usePracticeEngine({
     bpm: 80,
     progression: pair,
@@ -91,11 +93,13 @@ export default function ChangeDrill() {
     countInBars: countInPref ? 2 : 0, // one 4/4 measure of clicks to get ready
     metronomeVolume: metroVol,
     transpose,
+    instrument,
   });
 
   useEffect(() => setCountIn(countInPref ? 2 : 0), [countInPref, setCountIn]);
   useEffect(() => setMetronomeVolume(metroVol), [metroVol, setMetronomeVolume]);
   useEffect(() => setTranspose(transpose), [transpose, setTranspose]);
+  useEffect(() => setInstrument(instrument), [instrument, setInstrument]);
 
   const clearTimer = () => {
     if (timer.current) clearInterval(timer.current);

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { PracticeEngine, type EngineConfig, type EngineMode, type StepInfo } from "./engine";
+import type { InstrumentType } from "./instruments";
 import type { StrumPattern } from "@/data/types";
 
 export interface EngineUiState {
@@ -64,6 +65,7 @@ export function usePracticeEngine(config: EngineConfig) {
   const setMetronomeVolume = useCallback((v: number) => engineRef.current?.setMetronomeVolume(v), []);
   const setCountIn = useCallback((bars: number) => engineRef.current?.setCountIn(bars), []);
   const setTranspose = useCallback((semis: number) => engineRef.current?.setTranspose(semis), []);
+  const setInstrument = useCallback((t: InstrumentType) => engineRef.current?.setInstrument(t), []);
   const setMode = useCallback((m: EngineMode) => engineRef.current?.setMode(m), []);
   const setContent = useCallback(
     (progression: string[], pattern: StrumPattern) =>
@@ -82,6 +84,7 @@ export function usePracticeEngine(config: EngineConfig) {
     setMetronomeVolume,
     setCountIn,
     setTranspose,
+    setInstrument,
     setMode,
     setContent,
     previewChord,

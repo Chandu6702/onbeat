@@ -17,6 +17,7 @@ export default function StrumTrainer() {
   const countInPref = useSettings((s) => s.countIn);
   const metroVol = useSettings((s) => s.metronomeVolume);
   const transpose = useSettings((s) => s.transpose);
+  const instrument = useSettings((s) => s.instrument);
 
   const pattern = getPattern(patternId);
 
@@ -29,6 +30,7 @@ export default function StrumTrainer() {
     setMetronomeVolume,
     setCountIn,
     setTranspose,
+    setInstrument,
     setContent,
   } = usePracticeEngine({
     bpm: 80,
@@ -39,11 +41,13 @@ export default function StrumTrainer() {
     countInBars: countInPref ? 1 : 0,
     metronomeVolume: metroVol,
     transpose,
+    instrument,
   });
 
   useEffect(() => setCountIn(countInPref ? 1 : 0), [countInPref, setCountIn]);
   useEffect(() => setMetronomeVolume(metroVol), [metroVol, setMetronomeVolume]);
   useEffect(() => setTranspose(transpose), [transpose, setTranspose]);
+  useEffect(() => setInstrument(instrument), [instrument, setInstrument]);
 
   const choosePattern = (id: string) => {
     setPatternId(id);

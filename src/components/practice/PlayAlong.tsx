@@ -30,6 +30,7 @@ export default function PlayAlong({
   const countInPref = useSettings((s) => s.countIn);
   const metroVol = useSettings((s) => s.metronomeVolume);
   const transpose = useSettings((s) => s.transpose);
+  const instrument = useSettings((s) => s.instrument);
 
   const {
     ui,
@@ -40,6 +41,7 @@ export default function PlayAlong({
     setMetronomeVolume,
     setCountIn,
     setTranspose,
+    setInstrument,
     setContent,
   } = usePracticeEngine({
     bpm: startBpm,
@@ -50,6 +52,7 @@ export default function PlayAlong({
     countInBars: countInPref ? 1 : 0,
     metronomeVolume: metroVol,
     transpose,
+    instrument,
   });
 
   // A–B loop: when on, only bars [a..b] play and are shown. Clamp to range.
@@ -62,6 +65,7 @@ export default function PlayAlong({
   useEffect(() => setCountIn(countInPref ? 1 : 0), [countInPref, setCountIn]);
   useEffect(() => setMetronomeVolume(metroVol), [metroVol, setMetronomeVolume]);
   useEffect(() => setTranspose(transpose), [transpose, setTranspose]);
+  useEffect(() => setInstrument(instrument), [instrument, setInstrument]);
   // Re-point the engine whenever the looped range (or pattern) changes.
   useEffect(() => {
     setContent(activeProgression, pattern);

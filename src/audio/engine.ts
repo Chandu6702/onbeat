@@ -1,7 +1,7 @@
 import * as Tone from "tone";
 import { getChord } from "@/data/chords";
 import type { StrumPattern, StrumStep } from "@/data/types";
-import { createGuitar, createClick } from "./instruments";
+import { createGuitar, createClick, type Guitar, type InstrumentType } from "./instruments";
 
 export type EngineMode = "play" | "strum" | "metronome";
 
@@ -29,6 +29,8 @@ export interface EngineConfig {
   metronomeVolume?: number;
   /** capo / transpose in semitones applied to all played notes (default 0) */
   transpose?: number;
+  /** guitar voice: acoustic (default) or electric */
+  instrument?: InstrumentType;
 }
 
 const NOTE_SPREAD = 0.02; // seconds between strummed strings
@@ -39,7 +41,7 @@ const NOTE_SPREAD = 0.02; // seconds between strummed strings
  */
 export class PracticeEngine {
   private cfg: EngineConfig;
-  private guitar = createGuitar();
+  private guitar: Guitar;
   private click = createClick();
   private seq: Tone.Sequence<number> | null = null;
   private tickCount = 0;
@@ -49,6 +51,15 @@ export class PracticeEngine {
 
   constructor(cfg: EngineConfig) {
     this.cfg = { ...cfg };
+    this.guitar = createGuitar(cfg.instrument ?? "acoustic");
+  }
+
+  /** Swap the guitar voice (acoustic ↔ electric). Rebuilds the instrument. */
+  setInstrument(type: InstrumentType) {
+    if (this.guitar.type === type) return;
+    this.guitar.dispose();
+    this.guitar = createGuitar(type);
+    this.cfg.instrument = type;
   }
 
   private get stepsPerBar() {

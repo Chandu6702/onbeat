@@ -34,7 +34,8 @@ function fretGuide(chord: Chord): string[] {
 export default function ChordDetail({ name, onBack }: { name: string; onBack: () => void }) {
   const chord = getChord(name);
   const transpose = useSettings((s) => s.transpose);
-  const { previewChord, setTranspose } = usePracticeEngine({
+  const instrument = useSettings((s) => s.instrument);
+  const { previewChord, setTranspose, setInstrument } = usePracticeEngine({
     bpm: 80,
     progression: [name],
     pattern: getPattern("folk-down"),
@@ -42,9 +43,11 @@ export default function ChordDetail({ name, onBack }: { name: string; onBack: ()
     metronome: false,
     countInBars: 0,
     transpose,
+    instrument,
   });
 
   useEffect(() => setTranspose(transpose), [transpose, setTranspose]);
+  useEffect(() => setInstrument(instrument), [instrument, setInstrument]);
 
   if (!chord) {
     return (

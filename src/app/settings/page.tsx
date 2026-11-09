@@ -2,6 +2,7 @@
 
 import { useHasHydrated } from "@/state/progress";
 import { useSettings, type Theme } from "@/state/settings";
+import type { InstrumentType } from "@/audio/instruments";
 
 function Row({
   title,
@@ -49,11 +50,13 @@ export default function SettingsPage() {
     countIn,
     metronomeVolume,
     transpose,
+    instrument,
     setTheme,
     toggleLefty,
     toggleCountIn,
     setMetronomeVolume,
     setTranspose,
+    setInstrument,
   } = useSettings();
 
   const volPct = Math.round(metronomeVolume * 100);
@@ -79,6 +82,22 @@ export default function SettingsPage() {
                 }`}
               >
                 {t}
+              </button>
+            ))}
+          </div>
+        </Row>
+
+        <Row title="Guitar sound" desc="Acoustic is warm and woody; electric is brighter with a little drive.">
+          <div className="inline-flex gap-1 rounded-xl border border-line bg-panel-2 p-1">
+            {(["acoustic", "electric"] as InstrumentType[]).map((i) => (
+              <button
+                key={i}
+                onClick={() => setInstrument(i)}
+                className={`rounded-lg px-3 py-1.5 text-[13px] font-semibold capitalize transition ${
+                  (hydrated ? instrument : "acoustic") === i ? "bg-accent text-white" : "text-muted"
+                }`}
+              >
+                {i}
               </button>
             ))}
           </div>
