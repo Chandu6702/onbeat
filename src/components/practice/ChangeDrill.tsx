@@ -20,6 +20,7 @@ const CANDIDATE_PAIRS: [string, string][] = [
 const DURATION = 60;
 const MIN_BPM = 50;
 const MAX_BPM = 160;
+const TEMPO_STEP = 6; // how much the tempo trainer nudges BPM per round
 
 // The drill loops two "bars" of 2 beats each (4 eighth-notes), so the chord
 // flips every 2 beats. One down-strum per beat gives an audible pulse to follow.
@@ -52,7 +53,14 @@ export default function ChangeDrill() {
 
   const [running, setRunning] = useState(false);
   const [left, setLeft] = useState(DURATION);
-  const [result, setResult] = useState<{ perMin: number; count: number; saved: boolean; isBest: boolean } | null>(null);
+  const [trainer, setTrainer] = useState(false);
+  const [result, setResult] = useState<{
+    perMin: number;
+    count: number;
+    saved: boolean;
+    isBest: boolean;
+    nextBpm?: number;
+  } | null>(null);
 
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const timerStarted = useRef(false);
@@ -144,7 +152,17 @@ export default function ChangeDrill() {
   const confirmClean = () => {
     if (!result) return;
     const isBest = reportChanges(result.perMin);
-    setResult({ ...result, saved: true, isBest });
+    let nextBpm: number | undefined;
+    if (trainer && bpm < MAX_BPM) {
+      nextBpm = Math.min(MAX_BPM, bpm + TEMPO_STEP);
+      setBpm(nextBpm);
+    }
+    setResult({ ...result, saved: true, isBest, nextBpm });
+  };
+
+  const retry = () => {
+    if (trainer && bpm > MIN_BPM) setBpm(Math.max(MIN_BPM, bpm - TEMPO_STEP));
+    setResult(null);
   };
 
   const activeIsSecond = running && !ui.isCountIn && ui.chord === pair[1];
@@ -231,6 +249,28 @@ export default function ChangeDrill() {
         />
       </div>
 
+      <div className="mt-3 flex items-center justify-between rounded-[13px] border border-line bg-panel px-3.5 py-2.5">
+        <div className="text-left">
+          <div className="text-[13px] font-semibold">Tempo trainer</div>
+          <div className="text-[11.5px] text-muted">Nudge the tempo up each time you keep up.</div>
+        </div>
+        <button
+          role="switch"
+          aria-checked={trainer}
+          aria-label="Tempo trainer"
+          onClick={() => setTrainer((v) => !v)}
+          className={`relative h-7 w-12 flex-none rounded-full transition-colors ${
+            trainer ? "bg-accent" : "bg-panel-2 border border-line"
+          }`}
+        >
+          <span
+            className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-white shadow transition-all ${
+              trainer ? "left-[26px]" : "left-[3px]"
+            }`}
+          />
+        </button>
+      </div>
+
       <div className="mt-3.5 text-[13px] text-muted">
         Personal best: <b className="text-fg">{hydrated ? best : 0}</b> / min
       </div>
@@ -251,7 +291,7 @@ export default function ChangeDrill() {
               Yes — kept up ✓
             </button>
             <button
-              onClick={() => setResult(null)}
+              onClick={retry}
               className="flex-1 rounded-[13px] border border-line bg-panel py-3 text-[14px] font-semibold text-muted transition hover:border-accent"
             >
               Too fast — retry
@@ -264,7 +304,10 @@ export default function ChangeDrill() {
         <div className={`mt-3 font-semibold ${result.isBest ? "text-go" : "text-muted"}`}>
           {result.isBest
             ? `🏆 New personal best — ${result.perMin} changes/min!`
-            : `Locked in ${result.perMin}/min. Nudge the tempo up next round.`}
+            : `Locked in ${result.perMin}/min.`}
+          {result.nextBpm && (
+            <div className="mt-1 text-[13px] text-beat">⏫ Tempo up to {result.nextBpm} BPM — go again.</div>
+          )}
         </div>
       )}
 

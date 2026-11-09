@@ -53,11 +53,14 @@ Reframing: the "tap a chord to hear it" button is only a *preview*. The real pro
 
 ## Tier 3 — customization (currently "present only, no options")
 
-- [ ] **Settings page:** left-handed fretboards, count-in on/off, metronome sound/volume,
-      backing instrument, dark/light.
-- [ ] **Capo & transpose** (change key without new shapes).
-- [ ] **A–B loop** — repeat just the hard bars of a play-along.
-- [ ] **Tempo trainer** — auto-nudge BPM up as you succeed (great for change drills).
+- [x] **Settings page:** Done — dark/light theme, left-handed fretboards, count-in on/off,
+      metronome volume. (`app/settings/page.tsx`, `state/settings.ts`) _Backing instrument
+      deferred — only one synth voice exists so far._
+- [x] **Capo & transpose** — Done: a −5…+7 semitone shift applied to all playback.
+      (`state/settings.ts`, `audio/engine.ts`)
+- [x] **A–B loop** — Done: repeat bars [a..b] of a play-along. (`components/practice/PlayAlong.tsx`)
+- [x] **Tempo trainer** — Done: the change drill nudges BPM up when you keep up, down when you
+      retry. (`components/practice/ChangeDrill.tsx`)
 - [ ] **Custom drills** — pick any chords to drill; build multi-section (verse/chorus) loops in Create.
 
 ## Tier 4 — polish & retention
