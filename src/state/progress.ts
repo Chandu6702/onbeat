@@ -144,9 +144,15 @@ export const useProgress = create<ProgressState>()(
 );
 
 // Avoids SSR/first-paint hydration mismatch when displaying persisted values.
-import { useEffect, useState } from "react";
+// useSyncExternalStore returns the server snapshot (false) during SSR and the
+// first client render, then the client snapshot (true) once hydrated — no
+// effect, no cascading render.
+import { useSyncExternalStore } from "react";
+const noop = () => () => {};
 export function useHasHydrated() {
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => setHydrated(true), []);
-  return hydrated;
+  return useSyncExternalStore(
+    noop,
+    () => true,
+    () => false,
+  );
 }
