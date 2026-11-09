@@ -67,7 +67,7 @@ export default function SettingsPage() {
     <>
       <h1 className="font-display text-[22px] font-semibold">Settings</h1>
       <p className="mt-1.5 text-[13.5px] text-muted">
-        Make Cadence fit how you play. Saved on this device.
+        Make Onbeat fit how you play. Saved on this device.
       </p>
 
       <div className="mt-5 flex flex-col gap-3">

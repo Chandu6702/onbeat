@@ -1,4 +1,4 @@
-# Build Plan — Cadence (working name)
+# Build Plan — Onbeat
 
 _A phased plan to build the web app. Companion to `PRODUCT-SPEC.md`. Web-first, guitar-first._
 
@@ -180,12 +180,11 @@ See **`IMPROVEMENTS.md`** for the research-backed post-v1 roadmap (hands-free/tu
 mode, more chords & strumming types, proper ordering, and customization), organized in tiers.
 
 **Suggested next steps (v2):**
-- Deploy to Vercel for a shareable URL.
-- Rename from the placeholder "Cadence".
-- Add accounts + cross-device sync (Supabase or Next.js API routes).
+- Deploy for a shareable URL (Render Static Site — see `DEPLOYMENT.md`).
+- Add accounts + cross-device sync — _built (Supabase), see `SUPABASE_SETUP.md`._
 - More chords/patterns, Medium/Hard content, the nudging learning path.
 - Better instrument samples + an optional drum groove.
 - Then v3: more instruments, mobile wrap, mic detection, public-domain songs.
 
-_App name is still the placeholder "Cadence" — rename in `src/app/layout.tsx`,
-`src/components/SideNav.tsx`, and `src/app/page.tsx`._
+_App name is **Onbeat** (renamed from the "Cadence" placeholder). The `localStorage` keys stay
+`cadence-*` on purpose so existing progress isn't wiped._

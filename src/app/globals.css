@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ===== Cadence design tokens (dark, committed) ===== */
+/* ===== Onbeat design tokens (dark, committed) ===== */
 @theme {
   --color-ink: #0b0d14;
   --color-ink-2: #0d1018;

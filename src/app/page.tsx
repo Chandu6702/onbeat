@@ -65,10 +65,10 @@ export default function Home() {
       <div className="mb-5 flex items-center justify-between md:hidden">
         <div className="flex items-center gap-2.5">
           <div className="grid h-[34px] w-[34px] place-items-center rounded-[10px] bg-gradient-to-br from-accent to-pink font-display text-lg font-bold text-white">
-            C
+            O
           </div>
           <div>
-            <b className="block font-display text-base font-semibold tracking-tight">Cadence</b>
+            <b className="block font-display text-base font-semibold tracking-tight">Onbeat</b>
             <span className="block text-[11px] text-faint">Practice studio</span>
           </div>
         </div>

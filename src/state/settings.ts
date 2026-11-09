@@ -39,6 +39,8 @@ export const useSettings = create<SettingsState>()(
       setTranspose: (transpose) => set({ transpose }),
       setInstrument: (instrument) => set({ instrument }),
     }),
+    // localStorage key kept as the original name on purpose — renaming it would
+    // wipe existing users' saved settings. Internal only; not user-visible.
     { name: "cadence-settings" },
   ),
 );

@@ -1,6 +1,6 @@
 # Improvements roadmap (post-v1)
 
-Research-backed ideas for making Cadence clearer, richer, and genuinely useful while
+Research-backed ideas for making Onbeat clearer, richer, and genuinely useful while
 you're actually holding the guitar. Companion to `BUILD-PLAN.md`.
 
 ## The guiding insight: hands-free
@@ -92,8 +92,8 @@ Audit (2026-09): the app is feature-complete but has production gaps. In priorit
    with `SUPABASE_SETUP.md`. (`src/lib/supabase.ts`, `src/lib/progressSync.ts`,
    `components/SyncProvider.tsx`, `components/profile/AccountPanel.tsx`)
 6. **Deploy + rename + test coverage** — ship to a URL (free; **`DEPLOYMENT.md` Phase 1** — the
-   app is fully static, so Vercel/Render/Cloudflare Pages all work for $0), drop the "Cadence"
-   placeholder, add component/e2e tests beyond the pure-logic units.
+   app is fully static, so Render/Cloudflare Pages/Vercel all work for $0). Name is now **Onbeat**
+   (done). Still to do: ship to a URL, add component/e2e tests beyond the pure-logic units.
 
 _Data hygiene (2026-10): new users now start from a true zero state — no pre-seeded "known"
 chords, so Learn/Profile/Journey show real progress only. Dead modules (`data/path.ts`,
@@ -111,7 +111,8 @@ beginner theory order ([National Guitar Academy](https://nationalguitaracademy.c
       practice log in the store (schema v4). (`components/profile/PracticeCalendar.tsx`)
       _Still open: weekly-minutes total, gentle streak-freeze._
 - [ ] Clearer empty/finished states, richer copy, a sound-on prompt.
-- [ ] Deploy to a live URL; rename from the placeholder "Cadence."
+- [x] Renamed from the placeholder "Cadence" to **Onbeat**.
+- [ ] Deploy to a live URL (see `DEPLOYMENT.md`).
 
 ## Marquee: Listen mode ✅ v1
 

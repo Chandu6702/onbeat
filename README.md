@@ -1,4 +1,4 @@
-# Cadence — web app
+# Onbeat — web app
 
 A beginner-to-advanced guitar practice partner: **Learn**, **Practice**, **Create**, plus a
 **Music theory** track and a **Journey** level system. Built web-first with Next.js. Play-along
@@ -73,5 +73,6 @@ Guitar samples are from [nbrosowsky/tonejs-instruments](https://github.com/nbros
 - **Accounts & cloud sync are built but off by default** — the app runs fully local until you add
   Supabase keys; then progress syncs across devices. Turn it on with `SUPABASE_SETUP.md`.
 - **No real songs** — all loops are generated; no licensed tabs.
-- App name **"Cadence" is a placeholder** — rename in `src/app/layout.tsx`,
-  `src/components/SideNav.tsx`, and `src/app/page.tsx`.
+- The app is named **Onbeat**. (The `localStorage` keys are still `cadence-*` on purpose — renaming
+  them would wipe saved progress. The GitHub repo slug `Chandu6702/cadence` can be renamed
+  separately on GitHub if you want.)

@@ -47,12 +47,12 @@ export default function Onboarding() {
         {step === 0 && (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <div className="grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-accent to-pink font-display text-3xl font-bold text-white">
-              C
+              O
             </div>
-            <h1 className="mt-5 font-display text-[26px] font-bold">Welcome to Cadence</h1>
+            <h1 className="mt-5 font-display text-[26px] font-bold">Welcome to Onbeat</h1>
             <p className="mt-3 max-w-[40ch] text-[14px] leading-relaxed text-muted">
               Your hands-free guitar practice partner. Once the guitar&apos;s in your hands you
-              can&apos;t tap the screen — so Cadence <b className="text-fg">plays and counts you in</b>,
+              can&apos;t tap the screen — so Onbeat <b className="text-fg">plays and counts you in</b>,
               switches chords <b className="text-fg">on the beat</b>, and has a big{" "}
               <b className="text-fg">Stand mode</b> you can read from across the room.
             </p>

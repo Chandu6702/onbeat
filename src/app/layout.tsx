@@ -20,7 +20,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Cadence — Practice studio",
+  title: "Onbeat — Practice studio",
   description: "Learn, practice, and create music. A beginner-to-advanced practice partner.",
 };
 

@@ -194,7 +194,7 @@ export default function TunerPage() {
       <p className="mt-4 text-center text-xs text-faint">
         Standard tuning, low to high: E · A · D · G · B · E.{" "}
         <Link href="/about" className="font-semibold text-accent-2 hover:underline">
-          How to use Cadence
+          How to use Onbeat
         </Link>
       </p>
     </>

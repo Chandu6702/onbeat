@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "About & how-to — Cadence",
+  title: "About & how-to — Onbeat",
 };
 
 const STEPS: { n: string; title: string; body: string; href?: string; cta?: string }[] = [
@@ -15,7 +15,7 @@ const STEPS: { n: string; title: string; body: string; href?: string; cta?: stri
   {
     n: "2",
     title: "Set up, then put the screen down",
-    body: "Pick your chords, pattern, and tempo while you've got a free hand. Once you start, Cadence runs on its own — you shouldn't need to touch the screen.",
+    body: "Pick your chords, pattern, and tempo while you've got a free hand. Once you start, Onbeat runs on its own — you shouldn't need to touch the screen.",
     href: "/practice?mode=play",
     cta: "Go to play-along",
   },
@@ -38,7 +38,7 @@ export default function AboutPage() {
     <>
       <h1 className="font-display text-[22px] font-semibold">About &amp; how-to</h1>
       <p className="mt-1.5 text-[13.5px] leading-relaxed text-muted">
-        Cadence is a hands-free guitar practice partner. The idea is simple: once the guitar is in
+        Onbeat is a hands-free guitar practice partner. The idea is simple: once the guitar is in
         your hands, you can&apos;t tap a screen — so the app plays, counts you in, and moves in tempo
         while you play along.
       </p>

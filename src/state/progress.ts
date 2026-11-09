@@ -182,6 +182,8 @@ export const useProgress = create<ProgressState>()(
       mergeRemote: (data) => set((s) => mergeProgress(exportProgress(s), data)),
     }),
     {
+      // localStorage key kept as the original name on purpose — renaming it
+      // would wipe existing users' progress. Internal only; not user-visible.
       name: "cadence-progress",
       version: 4,
       migrate: (persisted, version) => {
