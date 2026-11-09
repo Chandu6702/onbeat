@@ -17,8 +17,10 @@ const VOICE: Record<
   InstrumentType,
   { attackNoise: number; dampening: number; resonance: number; release: number }
 > = {
-  acoustic: { attackNoise: 0.9, dampening: 4600, resonance: 0.93, release: 1.4 },
-  electric: { attackNoise: 0.4, dampening: 5600, resonance: 0.97, release: 1.8 },
+  // attackNoise is the main source of "buzz" in a plucked string — kept low for
+  // a clean attack; dampening set high enough to tame high-frequency hiss.
+  acoustic: { attackNoise: 0.35, dampening: 4900, resonance: 0.92, release: 1.4 },
+  electric: { attackNoise: 0.28, dampening: 5400, resonance: 0.96, release: 1.8 },
 };
 
 /**

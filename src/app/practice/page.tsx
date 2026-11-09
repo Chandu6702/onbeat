@@ -15,24 +15,18 @@ const MODES = [
     icon: "🔁",
     title: "Chord-change drill",
     desc: "How many clean changes in 60s? Beat your best.",
-    tag: "Easy",
-    tagClass: "text-go",
   },
   {
     id: "strum" as const,
     icon: "🎸",
     title: "Strumming trainer",
-    desc: "Follow the pattern on the beat. Set your tempo.",
-    tag: "Med",
-    tagClass: "text-beat",
+    desc: "Follow the pattern on the beat — Easy to Hard.",
   },
   {
     id: "play" as const,
     icon: "▶️",
     title: "Play-along",
     desc: "A generated loop plays in tempo — you play along.",
-    tag: "Easy",
-    tagClass: "text-go",
   },
 ];
 
@@ -77,9 +71,6 @@ function PracticeInner() {
                 <div className="text-[15px] font-semibold">{m.title}</div>
                 <div className="mt-0.5 text-[12.5px] leading-snug text-muted">{m.desc}</div>
               </div>
-              <span className={`ml-auto text-[10.5px] font-bold uppercase ${m.tagClass}`}>
-                {m.tag}
-              </span>
             </button>
           ))}
 

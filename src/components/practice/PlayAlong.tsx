@@ -31,6 +31,7 @@ export default function PlayAlong({
   const metroVol = useSettings((s) => s.metronomeVolume);
   const transpose = useSettings((s) => s.transpose);
   const instrument = useSettings((s) => s.instrument);
+  const setInstrumentPref = useSettings((s) => s.setInstrument);
 
   const {
     ui,
@@ -187,6 +188,20 @@ export default function PlayAlong({
 
   return (
     <>
+      <div className="mb-3 flex items-center justify-center gap-1 rounded-full border border-line bg-panel p-1">
+        {(["acoustic", "electric"] as const).map((i) => (
+          <button
+            key={i}
+            onClick={() => setInstrumentPref(i)}
+            className={`flex-1 rounded-full py-1.5 text-[12.5px] font-semibold capitalize transition ${
+              instrument === i ? "bg-accent text-white" : "text-muted"
+            }`}
+          >
+            {i === "acoustic" ? "🎸 Acoustic" : "⚡ Electric"}
+          </button>
+        ))}
+      </div>
+
       <div className="overflow-hidden rounded-[20px] border border-line bg-gradient-to-b from-[#121524] to-[#0e111c] px-4 py-6 text-center">
         <div className="mb-[18px] flex justify-center gap-2.5">
           {[0, 1, 2, 3].map((b) => {
