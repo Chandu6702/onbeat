@@ -27,6 +27,7 @@ interface ProgressState {
   goal: PracticeGoal | null;
   completedLessons: string[]; // theory lesson ids
   sessions: number; // total practice sessions started
+  practiceLog: Record<string, number>; // YYYY-MM-DD -> sessions that day
 
   addXp: (n: number) => void;
   recordPractice: () => void;
@@ -61,12 +62,16 @@ export const useProgress = create<ProgressState>()(
       goal: null,
       completedLessons: [],
       sessions: 0,
+      practiceLog: {},
 
       addXp: (n) => set((s) => ({ xp: s.xp + n })),
 
       recordPractice: () => {
-        set((s) => ({ sessions: s.sessions + 1 }));
         const today = todayStr();
+        set((s) => ({
+          sessions: s.sessions + 1,
+          practiceLog: { ...s.practiceLog, [today]: (s.practiceLog[today] ?? 0) + 1 },
+        }));
         const last = get().lastPracticeDate;
         if (last === today) return;
         let streak = 1;
@@ -111,7 +116,7 @@ export const useProgress = create<ProgressState>()(
     }),
     {
       name: "cadence-progress",
-      version: 3,
+      version: 4,
       migrate: (persisted, version) => {
         const state = persisted as Partial<ProgressState>;
         // v1 users already have progress — don't show them onboarding.
@@ -123,6 +128,14 @@ export const useProgress = create<ProgressState>()(
         if (version < 3) {
           state.completedLessons = state.completedLessons ?? [];
           state.sessions = state.sessions ?? 0;
+        }
+        // v4 adds the per-day practice log for the history calendar.
+        if (version < 4) {
+          state.practiceLog = state.practiceLog ?? {};
+          // Seed the last known practice day so returning users aren't blank.
+          if (state.lastPracticeDate && !state.practiceLog[state.lastPracticeDate]) {
+            state.practiceLog[state.lastPracticeDate] = Math.max(1, state.sessions ?? 1);
+          }
         }
         return state;
       },

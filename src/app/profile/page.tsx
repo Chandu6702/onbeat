@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useProgress, useHasHydrated } from "@/state/progress";
 import { levelStatus, type LevelProgress } from "@/data/levels";
+import PracticeCalendar from "@/components/profile/PracticeCalendar";
 
 function Stat({ n, label, color }: { n: string | number; label: string; color?: string }) {
   return (
@@ -58,6 +59,10 @@ export default function ProfilePage() {
         <Stat n={show(xp).toLocaleString()} label="Total XP" color="var(--color-accent-2)" />
         <Stat n={show(bestChangesPerMin)} label="Best changes / min" color="var(--color-go)" />
         <Stat n={hydrated ? knownChords.length : 6} label="Chords you know" />
+      </div>
+
+      <div className="mt-3">
+        <PracticeCalendar />
       </div>
 
       <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">
