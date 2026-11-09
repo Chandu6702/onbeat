@@ -51,7 +51,7 @@ function daysBetween(a: string, b: string): number {
 export const useProgress = create<ProgressState>()(
   persist(
     (set, get) => ({
-      knownChords: ["Em", "Am", "C", "G", "D", "E"],
+      knownChords: [],
       xp: 0,
       streak: 0,
       lastPracticeDate: null,
@@ -108,11 +108,8 @@ export const useProgress = create<ProgressState>()(
         ),
 
       completeOnboarding: (chords, goal) =>
-        set({
-          knownChords: chords.length > 0 ? chords : ["Em", "Am", "C", "G"],
-          goal,
-          onboarded: true,
-        }),
+        // Honour an empty pick — "start gently" means no chords claimed yet.
+        set({ knownChords: chords, goal, onboarded: true }),
     }),
     {
       name: "cadence-progress",

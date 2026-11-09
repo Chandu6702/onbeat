@@ -58,7 +58,7 @@ export default function ProfilePage() {
         <Stat n={show(streak)} label="Day streak" color="var(--color-beat)" />
         <Stat n={show(xp).toLocaleString()} label="Total XP" color="var(--color-accent-2)" />
         <Stat n={show(bestChangesPerMin)} label="Best changes / min" color="var(--color-go)" />
-        <Stat n={hydrated ? knownChords.length : 6} label="Chords you know" />
+        <Stat n={hydrated ? knownChords.length : 0} label="Chords you know" />
       </div>
 
       <div className="mt-3">
@@ -69,14 +69,23 @@ export default function ProfilePage() {
         Chords you know
       </p>
       <div className="mt-3 flex flex-wrap gap-2.5">
-        {(hydrated ? knownChords : ["Em", "Am", "C", "G", "D", "E"]).map((c) => (
-          <span
-            key={c}
-            className="rounded-[11px] border border-accent-2 bg-accent px-3.5 py-2 font-display text-[15px] font-bold text-white"
+        {hydrated && knownChords.length === 0 ? (
+          <Link
+            href="/learn"
+            className="rounded-[11px] border border-dashed border-line bg-panel px-3.5 py-2 text-[13px] font-semibold text-muted transition hover:border-accent hover:text-fg"
           >
-            {c}
-          </span>
-        ))}
+            No chords yet — learn your first →
+          </Link>
+        ) : (
+          (hydrated ? knownChords : []).map((c) => (
+            <span
+              key={c}
+              className="rounded-[11px] border border-accent-2 bg-accent px-3.5 py-2 font-display text-[15px] font-bold text-white"
+            >
+              {c}
+            </span>
+          ))
+        )}
       </div>
 
       <div className="mt-6 flex flex-col gap-2.5">

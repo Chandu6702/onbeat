@@ -48,14 +48,18 @@ export default function ChangeDrill() {
   const transpose = useSettings((s) => s.transpose);
   const instrument = useSettings((s) => s.instrument);
 
-  const pairs = CANDIDATE_PAIRS.filter((p) => p.every((c) => known.includes(c)));
-  const [pair, setPair] = useState<[string, string]>(pairs[0] ?? ["Em", "Am"]);
+  // The drill teaches chord changes, so it always offers the standard beginner
+  // pairs — you don't need to already "know" them.
+  const pairs = CANDIDATE_PAIRS;
+  const [pair, setPair] = useState<[string, string]>(pairs[0]);
   const [bpm, setBpm] = useState(80);
 
-  // Custom drill: pick any two of your known chords.
+  // Custom drill: pick any two chords — your known ones, or a starter set if
+  // you haven't marked any yet.
+  const customChords = known.length ? known : ["Em", "Am", "D", "G", "C"];
   const [custom, setCustom] = useState(false);
-  const [cA, setCA] = useState<string>(pairs[0]?.[0] ?? known[0] ?? "Em");
-  const [cB, setCB] = useState<string>(pairs[0]?.[1] ?? known[1] ?? "Am");
+  const [cA, setCA] = useState<string>(customChords[0]);
+  const [cB, setCB] = useState<string>(customChords[1] ?? customChords[0]);
   const activePair: [string, string] = custom ? [cA, cB] : pair;
 
   const [running, setRunning] = useState(false);
@@ -224,7 +228,7 @@ export default function ChangeDrill() {
             <div key={label} className="mb-2 last:mb-0">
               <div className="mb-1 text-[11px] uppercase tracking-[0.08em] text-faint">{label}</div>
               <div className="flex flex-wrap gap-1.5">
-                {known.map((c) => (
+                {customChords.map((c) => (
                   <button
                     key={c}
                     onClick={() => setter(c)}

@@ -5,6 +5,8 @@ import { useMemo } from "react";
 import { useProgress, useHasHydrated } from "@/state/progress";
 import { generateLoop } from "@/audio/generator";
 
+const EMPTY: string[] = [];
+
 function StreakRing({ streak }: { streak: number }) {
   const r = 32;
   const c = 2 * Math.PI * r;
@@ -47,9 +49,11 @@ export default function Home() {
   const practicedToday = hydrated && lastPracticeDate === today;
   const isNew = hydrated && xp === 0;
 
-  // Use a fixed RNG and default chords until hydrated so the server and first
-  // client render match (avoids a hydration mismatch); refines after mount.
-  const known = hydrated ? knownChords : ["Em", "Am", "C", "G", "D", "E"];
+  // Match SSR/first render (empty until hydrated), then refine after mount.
+  // EMPTY is a stable reference so the recommendation memo doesn't re-run.
+  const known = hydrated ? knownChords : EMPTY;
+  // The recommendation falls back to a starter set purely to demo a loop — it
+  // doesn't claim the user "knows" these chords.
   const rec = useMemo(
     () => generateLoop(known.length ? known : ["Em", "Am", "C", "G"], "Pop", () => 0),
     [known],
@@ -144,7 +148,9 @@ export default function Home() {
             ▶️
           </div>
           <div className="min-w-0">
-            <div className="text-sm font-semibold">Play-along in your chords</div>
+            <div className="text-sm font-semibold">
+              {known.length ? "Play-along in your chords" : "Play-along with starter chords"}
+            </div>
             <div className="mt-0.5 truncate text-xs text-muted">{rec.chords.join(" · ")}</div>
           </div>
           <span className="ml-auto rounded-md bg-go/15 px-2 py-1 text-[10.5px] font-bold uppercase text-go">

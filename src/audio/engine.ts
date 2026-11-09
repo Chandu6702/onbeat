@@ -80,14 +80,14 @@ export class PracticeEngine {
     const total = this.cfg.progression.length * this.stepsPerBar;
     const events = Array.from({ length: total }, (_, i) => i);
     this.seq = new Tone.Sequence(
-      (time, idx) => this.tick(time, idx),
+      (time) => this.tick(time),
       events,
       this.subdivision,
     );
     this.seq.loop = true;
   }
 
-  private tick(time: number, _idx: number) {
+  private tick(time: number) {
     const spb = this.stepsPerBar;
     const absStep = this.tickCount++;
     const step = absStep % spb;
