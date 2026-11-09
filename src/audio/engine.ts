@@ -51,6 +51,15 @@ export class PracticeEngine {
     return this.cfg.pattern.steps.length;
   }
 
+  private get subdivision() {
+    return this.cfg.pattern.subdivision ?? "8n";
+  }
+
+  /** Grid slots per quarter-note beat: 2 for an 8th grid, 4 for a 16th grid. */
+  private get stepsPerBeat() {
+    return this.subdivision === "16n" ? 4 : 2;
+  }
+
   private rebuild() {
     this.seq?.dispose();
     const total = this.cfg.progression.length * this.stepsPerBar;
@@ -58,7 +67,7 @@ export class PracticeEngine {
     this.seq = new Tone.Sequence(
       (time, idx) => this.tick(time, idx),
       events,
-      "8n",
+      this.subdivision,
     );
     this.seq.loop = true;
   }
@@ -70,8 +79,9 @@ export class PracticeEngine {
     const absBar = Math.floor(absStep / spb);
     const bar = absBar % this.cfg.progression.length;
     const isCountIn = absBar < this.cfg.countInBars;
-    const isBeat = step % 2 === 0;
-    const beat = isBeat ? step / 2 : null;
+    const spBeat = this.stepsPerBeat;
+    const isBeat = step % spBeat === 0;
+    const beat = isBeat ? step / spBeat : null;
     const strum = this.cfg.pattern.steps[step] ?? "";
     const chordName = this.cfg.progression[bar];
 

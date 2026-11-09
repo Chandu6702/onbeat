@@ -33,8 +33,11 @@ export interface StrumPattern {
   name: string;
   genre: Genre;
   difficulty: Difficulty;
-  // One entry per eighth-note. 8 entries = one 4/4 bar.
+  // One entry per grid slot. With the default "8n" grid, 8 entries = one 4/4
+  // bar; with "16n", 16 entries = one bar.
   steps: StrumStep[];
+  // Grid resolution. Defaults to "8n" (eighth-notes).
+  subdivision?: "8n" | "16n";
 }
 
 export interface Progression {

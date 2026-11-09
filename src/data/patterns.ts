@@ -31,6 +31,39 @@ export const PATTERNS: StrumPattern[] = [
     difficulty: "easy",
     steps: ["D", "", "", "", "D", "U", "", ""],
   },
+  {
+    id: "metronome-only",
+    name: "Metronome only",
+    genre: "Folk",
+    difficulty: "easy",
+    // No strums — just the click. Good for building time before adding a hand.
+    steps: ["", "", "", "", "", "", "", ""],
+  },
+  {
+    id: "offbeat-reggae",
+    name: "Offbeat (reggae)",
+    genre: "Rock",
+    difficulty: "med",
+    // Up-strokes on the "and" of each beat — the reggae/ska skank.
+    steps: ["", "U", "", "U", "", "U", "", "U"],
+  },
+  {
+    id: "rock-eighths",
+    name: "Palm-mute drive",
+    genre: "Rock",
+    difficulty: "med",
+    // Steady down-strokes on every eighth — chug it with a palm mute.
+    steps: ["D", "D", "D", "D", "D", "D", "D", "D"],
+  },
+  {
+    id: "pop-16th",
+    name: "16th-note pop",
+    genre: "Pop",
+    difficulty: "hard",
+    subdivision: "16n",
+    // One bar on a 16th grid (16 slots).
+    steps: ["D", "", "", "U", "", "U", "D", "U", "D", "", "", "U", "", "U", "D", "U"],
+  },
 ];
 
 export const PATTERNS_BY_ID: Record<string, StrumPattern> = Object.fromEntries(
