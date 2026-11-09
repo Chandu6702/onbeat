@@ -123,40 +123,36 @@ export class PracticeEngine {
   private playStrum(chordName: string, time: number, dir: StrumStep) {
     const chord = getChord(chordName);
     if (!chord) return;
-    const strings = this.guitar.strings;
     const semis = this.cfg.transpose ?? 0;
-    const notes = chord.midi.map((m, idx) => ({ m, idx }));
-    const order = dir === "U" ? [...notes].reverse() : notes;
-    order.forEach((n, i) => {
-      const note = Tone.Frequency(n.m + semis, "midi").toNote();
-      strings[n.idx % strings.length].triggerAttack(note, time + i * NOTE_SPREAD);
+    const notes = [...chord.midi];
+    const order = dir === "U" ? notes.reverse() : notes;
+    order.forEach((m, i) => {
+      this.guitar.pluck(Tone.Frequency(m + semis, "midi").toNote(), time + i * NOTE_SPREAD);
     });
   }
 
   /** Play an arbitrary set of notes — melodic (one at a time) or harmonic. */
   async previewNotes(midis: number[], harmonic = false) {
     await Tone.start();
+    await this.guitar.loaded;
     const now = Tone.now();
-    const strings = this.guitar.strings;
     const semis = this.cfg.transpose ?? 0;
     const gap = harmonic ? NOTE_SPREAD : 0.42;
     midis.forEach((m, i) => {
-      const note = Tone.Frequency(m + semis, "midi").toNote();
-      strings[i % strings.length].triggerAttack(note, now + i * gap);
+      this.guitar.pluck(Tone.Frequency(m + semis, "midi").toNote(), now + i * gap);
     });
   }
 
   /** Preview a single chord immediately (for the chord library / create picker). */
   async previewChord(chordName: string) {
     await Tone.start();
+    await this.guitar.loaded;
     const chord = getChord(chordName);
     if (!chord) return;
     const now = Tone.now();
-    const strings = this.guitar.strings;
     const semis = this.cfg.transpose ?? 0;
     chord.midi.forEach((m, i) => {
-      const note = Tone.Frequency(m + semis, "midi").toNote();
-      strings[i % strings.length].triggerAttack(note, now + i * NOTE_SPREAD);
+      this.guitar.pluck(Tone.Frequency(m + semis, "midi").toNote(), now + i * NOTE_SPREAD);
     });
   }
 
