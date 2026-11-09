@@ -1,16 +1,32 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { usePracticeEngine } from "@/audio/usePracticeEngine";
 import { getPattern } from "@/data/patterns";
 import { getChord } from "@/data/chords";
-import { useProgress } from "@/state/progress";
+import { generateLoop } from "@/audio/generator";
+import { useProgress, useHasHydrated } from "@/state/progress";
 import { chordPitchClasses, chordCoverage, detectPitchClasses } from "@/audio/pitch";
 
-const PROGRESSION = ["Em", "C", "G", "D"]; // the first real four-chord loop
-const LOOPS = 2; // bars to score = PROGRESSION.length * LOOPS
+const FALLBACK = ["Em", "C", "G", "D"]; // starter loop when you don't know chords yet
+const LOOPS = 2; // bars to score = progression.length * LOOPS
 const HIT = 0.6; // coverage needed to count a bar as "played right"
+
+// Build the loop to listen for: a ?chords= deep-link wins, else a playable loop
+// generated from the chords you know, else the starter fallback.
+function buildProgression(known: string[], param: string | null): string[] {
+  if (param) {
+    const chords = param
+      .split(",")
+      .map((c) => c.trim())
+      .filter((c) => getChord(c));
+    if (chords.length >= 2) return chords.slice(0, 8);
+  }
+  if (known.length >= 2) return generateLoop(known, "Pop").chords;
+  return FALLBACK;
+}
 
 type Status = "idle" | "denied" | "error" | "listening" | "done";
 interface BarResult {
@@ -19,11 +35,17 @@ interface BarResult {
   hit: boolean;
 }
 
-export default function ListenPage() {
+function ListenInner() {
+  const params = useSearchParams();
+  const chordsParam = params.get("chords");
+  const knownChords = useProgress((s) => s.knownChords);
+  const hydrated = useHasHydrated();
+
   const [status, setStatus] = useState<Status>("idle");
   const [bpm, setBpm] = useState(70);
   const [results, setResults] = useState<BarResult[]>([]);
   const [liveCoverage, setLiveCoverage] = useState(0);
+  const [progression, setProgression] = useState<string[]>(FALLBACK);
   const recordPractice = useProgress((s) => s.recordPractice);
   const addXp = useProgress((s) => s.addXp);
 
@@ -36,10 +58,18 @@ export default function ListenPage() {
   const prevBar = useRef(-1);
   const scored = useRef(0);
   const recorded = useRef(false);
+  const builtRef = useRef(false);
 
-  const { ui, play, stop, setBpm: setEngineBpm } = usePracticeEngine({
+  // Pick the loop once, after the store has hydrated (so it reflects your chords).
+  useEffect(() => {
+    if (!hydrated || builtRef.current) return;
+    builtRef.current = true;
+    queueMicrotask(() => setProgression(buildProgression(knownChords, chordsParam)));
+  }, [hydrated, knownChords, chordsParam]);
+
+  const { ui, play, stop, setBpm: setEngineBpm, setContent } = usePracticeEngine({
     bpm: 70,
-    progression: PROGRESSION,
+    progression: FALLBACK,
     pattern: getPattern("folk-down"),
     mode: "metronome", // clicks + bar advancement, but the app stays silent
     metronome: true,
@@ -59,23 +89,26 @@ export default function ListenPage() {
 
   useEffect(() => () => cleanup(), [cleanup]);
 
-  const finishBar = useCallback((chordName: string) => {
-    const expected = chordPitchClasses(getChord(chordName)?.midi ?? []);
-    const need = Math.max(2, Math.floor(frames.current * 0.15));
-    const present = new Set<number>();
-    counts.current.forEach((c, pc) => {
-      if (c >= need) present.add(pc);
-    });
-    const coverage = chordCoverage(present, expected);
-    setResults((r) => [...r, { chord: chordName, coverage, hit: coverage >= HIT }]);
-    counts.current = new Map();
-    frames.current = 0;
-    scored.current += 1;
-    if (scored.current >= PROGRESSION.length * LOOPS) {
-      cleanup();
-      setStatus("done");
-    }
-  }, [cleanup]);
+  const finishBar = useCallback(
+    (chordName: string) => {
+      const expected = chordPitchClasses(getChord(chordName)?.midi ?? []);
+      const need = Math.max(2, Math.floor(frames.current * 0.15));
+      const present = new Set<number>();
+      counts.current.forEach((c, pc) => {
+        if (c >= need) present.add(pc);
+      });
+      const coverage = chordCoverage(present, expected);
+      setResults((r) => [...r, { chord: chordName, coverage, hit: coverage >= HIT }]);
+      counts.current = new Map();
+      frames.current = 0;
+      scored.current += 1;
+      if (scored.current >= progression.length * LOOPS) {
+        cleanup();
+        setStatus("done");
+      }
+    },
+    [cleanup, progression],
+  );
 
   // Score a bar whenever the engine advances to the next one (after count-in).
   useEffect(() => {
@@ -85,11 +118,11 @@ export default function ListenPage() {
       return;
     }
     if (ui.bar !== prevBar.current) {
-      const finishedChord = PROGRESSION[prevBar.current];
+      const finishedChord = progression[prevBar.current];
       prevBar.current = ui.bar;
       queueMicrotask(() => finishBar(finishedChord));
     }
-  }, [status, ui.bar, ui.isCountIn, finishBar]);
+  }, [status, ui.bar, ui.isCountIn, finishBar, progression]);
 
   const start = async () => {
     try {
@@ -123,11 +156,13 @@ export default function ListenPage() {
         classes.forEach((pc) => counts.current.set(pc, (counts.current.get(pc) ?? 0) + 1));
         frames.current += 1;
         // Live coverage against the current expected chord (for the meter).
-        const expected = chordPitchClasses(getChord(PROGRESSION[prevBar.current] ?? "Em")?.midi ?? []);
+        const expected = chordPitchClasses(getChord(progression[prevBar.current] ?? "Em")?.midi ?? []);
         setLiveCoverage(chordCoverage(classes, expected));
         rafRef.current = requestAnimationFrame(tick);
       };
       rafRef.current = requestAnimationFrame(tick);
+      // Sync the engine to the chosen loop, then start.
+      setContent(progression, getPattern("folk-down"));
       setEngineBpm(bpm);
       play();
     } catch (err) {
@@ -146,7 +181,7 @@ export default function ListenPage() {
   };
 
   const hits = results.filter((r) => r.hit).length;
-  const total = PROGRESSION.length * LOOPS;
+  const total = progression.length * LOOPS;
 
   // Award XP once when a listen run finishes.
   useEffect(() => {
@@ -177,7 +212,7 @@ export default function ListenPage() {
             )}
             <div className="font-display text-[15px] font-semibold text-muted">You&apos;ll play</div>
             <div className="mt-2 flex flex-wrap justify-center gap-2">
-              {PROGRESSION.map((c, i) => (
+              {progression.map((c, i) => (
                 <span
                   key={i}
                   className="grid h-11 min-w-11 place-items-center rounded-xl border border-line bg-panel px-2 font-display text-[18px] font-bold"
@@ -187,7 +222,10 @@ export default function ListenPage() {
               ))}
             </div>
             <p className="mx-auto mt-4 max-w-[34ch] text-[12.5px] leading-relaxed text-faint">
-              Nothing is recorded — the mic is analysed live on your device. {LOOPS} times through.
+              {knownChords.length >= 2 && !chordsParam
+                ? "Built from the chords you know."
+                : "Nothing is recorded — the mic is analysed live on your device."}{" "}
+              {LOOPS} times through.
             </p>
             <button
               onClick={start}
@@ -202,10 +240,10 @@ export default function ListenPage() {
               {ui.isCountIn ? "count in — get ready" : "play this chord"}
             </div>
             <div className="bg-gradient-to-b from-white to-[#c9c6ff] bg-clip-text font-display text-[64px] font-bold leading-none text-transparent">
-              {ui.chord || PROGRESSION[0]}
+              {ui.chord || progression[0]}
             </div>
             <div className="mt-2 text-[13px] text-muted">
-              {ui.isCountIn ? " " : `next · ${PROGRESSION[(ui.bar + 1) % PROGRESSION.length]}`}
+              {ui.isCountIn ? " " : `next · ${progression[(ui.bar + 1) % progression.length]}`}
             </div>
 
             {/* live match meter */}
@@ -302,11 +340,19 @@ export default function ListenPage() {
       />
 
       <p className="mt-4 text-center text-xs text-faint">
-        New &amp; experimental — chord detection is approximate.{" "}
+        Experimental — chord detection is approximate.{" "}
         <Link href="/tuner" className="font-semibold text-accent-2 hover:underline">
           Tune up first
         </Link>
       </p>
     </>
+  );
+}
+
+export default function ListenPage() {
+  return (
+    <Suspense fallback={<div className="text-muted">Loading…</div>}>
+      <ListenInner />
+    </Suspense>
   );
 }
