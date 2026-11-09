@@ -48,20 +48,21 @@ const SAMPLES: Record<InstrumentType, { baseUrl: string; urls: Record<string, st
 export function createGuitar(type: InstrumentType = "acoustic"): Guitar {
   // Master safety: hard limiter into the output so a 6-note strum can't clip.
   const limiter = new Tone.Limiter(-2).toDestination();
+  // Very light reverb only — too much wash makes overlapping strums flutter.
   const reverb = new Tone.Reverb({
-    decay: type === "electric" ? 1.2 : 1.6,
-    wet: type === "electric" ? 0.06 : 0.12,
+    decay: type === "electric" ? 1.0 : 1.3,
+    wet: type === "electric" ? 0.04 : 0.06,
   }).connect(limiter);
-  // Glue compressor to even out stacked notes before the limiter.
-  const comp = new Tone.Compressor({ threshold: -24, ratio: 3, attack: 0.004, release: 0.2 }).connect(reverb);
   // EQ: trim boom, lift presence/air so recorded chords read as clear strings.
+  // (No compressor — its fast gain pumping on each strum caused a fluttery
+  // "drr" chatter; the limiter alone keeps peaks safe.)
   const eq = new Tone.EQ3({
     low: -3,
     mid: type === "electric" ? 2 : 1,
     high: type === "electric" ? 3 : 5,
     lowFrequency: 250,
     highFrequency: 2600,
-  }).connect(comp);
+  }).connect(reverb);
   // High-pass tames the boomy low fundamentals of recorded low strings.
   const highpass = new Tone.Filter(100, "highpass").connect(eq);
 
@@ -81,7 +82,9 @@ export function createGuitar(type: InstrumentType = "acoustic"): Guitar {
   const sampler = new Tone.Sampler({
     urls: set.urls,
     baseUrl: set.baseUrl,
-    release: 1.4,
+    // Shorter release so a re-strummed note's old copy fades before the new one
+    // hits — avoids stacked duplicates phasing into a flutter.
+    release: 0.6,
     onload: () => resolveLoaded(),
   }).connect(head);
   // Recorded samples are near 0 dB; drop them a lot so stacked strum notes
@@ -96,7 +99,7 @@ export function createGuitar(type: InstrumentType = "acoustic"): Guitar {
     loaded,
     dispose() {
       sampler.dispose();
-      [comp, reverb, limiter, ...extra].forEach((n) => n.dispose());
+      [reverb, limiter, ...extra].forEach((n) => n.dispose());
     },
   };
 }
