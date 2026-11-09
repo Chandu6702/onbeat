@@ -105,7 +105,11 @@ export class PracticeEngine {
     }
 
     if (!isCountIn && strum && this.cfg.mode !== "metronome") {
-      this.playStrum(chordName, time, strum);
+      if (this.cfg.pattern.style === "fingerpick") {
+        this.playPick(chordName, time, this.cfg.pattern.picks?.[step] ?? null);
+      } else {
+        this.playStrum(chordName, time, strum);
+      }
     }
 
     Tone.getDraw().schedule(() => {
@@ -127,6 +131,22 @@ export class PracticeEngine {
     const notes = [...chord.midi];
     const order = dir === "U" ? notes.reverse() : notes;
     order.forEach((m, i) => {
+      this.guitar.pluck(Tone.Frequency(m + semis, "midi").toNote(), time + i * NOTE_SPREAD);
+    });
+  }
+
+  /** Fingerpick: pluck only the named strings of the chord (indices into its
+   *  sounding notes; negative counts from the top). Near-simultaneous, with a
+   *  hair of spread so a bass+treble pinch doesn't phase. */
+  private playPick(chordName: string, time: number, indices: number[] | null) {
+    if (!indices || indices.length === 0) return;
+    const chord = getChord(chordName);
+    if (!chord) return;
+    const notes = chord.midi;
+    const n = notes.length;
+    const semis = this.cfg.transpose ?? 0;
+    indices.forEach((idx, i) => {
+      const m = notes[((idx % n) + n) % n]; // wrap; -1 -> top string
       this.guitar.pluck(Tone.Frequency(m + semis, "midi").toNote(), time + i * NOTE_SPREAD);
     });
   }

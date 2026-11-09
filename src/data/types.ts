@@ -7,8 +7,8 @@ export type Genre = "Pop" | "Folk" | "Rock" | "Ballad";
 // Chord families, used to group the library. Ordered easiest-concept first.
 export type ChordType = "Major" | "Minor" | "7th" | "m7" | "sus" | "add9" | "Power";
 
-// A single strum slot within a bar: down, up, or a rest.
-export type StrumStep = "D" | "U" | "";
+// A single slot within a bar: down-strum, up-strum, a fingerpicked pluck, or a rest.
+export type StrumStep = "D" | "U" | "P" | "";
 
 export interface Chord {
   name: string;
@@ -38,6 +38,13 @@ export interface StrumPattern {
   steps: StrumStep[];
   // Grid resolution. Defaults to "8n" (eighth-notes).
   subdivision?: "8n" | "16n";
+  // Playback style. "strum" (default) sweeps the whole chord per D/U step.
+  // "fingerpick" plucks only the strings named in `picks` for each slot.
+  style?: "strum" | "fingerpick";
+  // Fingerpicking: one entry per slot, each a list of string indices into the
+  // chord's sounding notes (0 = lowest/bass). Negative counts from the top
+  // (-1 = highest string). null/empty = rest. Only used when style is "fingerpick".
+  picks?: (number[] | null)[];
 }
 
 export interface Progression {

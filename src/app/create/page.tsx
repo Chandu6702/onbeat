@@ -20,6 +20,7 @@ export default function CreatePage() {
 
   const [selected, setSelected] = useState<string[]>(known.slice(0, 4));
   const [genre, setGenre] = useState<Genre>("Pop");
+  const [fingerstyle, setFingerstyle] = useState(false);
   const [bpm, setBpm] = useState(80);
   const [loop, setLoop] = useState<GeneratedLoop | null>(null);
   const [error, setError] = useState("");
@@ -37,7 +38,12 @@ export default function CreatePage() {
       return;
     }
     setSavedMsg("");
-    setLoop(generateLoop(selected, genre));
+    const l = generateLoop(selected, genre);
+    // Fingerstyle overrides the strum pattern with a picking pattern of the same feel.
+    if (fingerstyle) {
+      l.patternId = genre === "Ballad" ? "fingerpick-ballad" : "fingerpick-arp";
+    }
+    setLoop(l);
   };
 
   const save = () => {
@@ -124,6 +130,29 @@ export default function CreatePage() {
             </button>
           ))}
         </div>
+
+        <button
+          onClick={() => setFingerstyle((f) => !f)}
+          className="mt-3 flex w-full items-center justify-between rounded-xl border border-line bg-panel-2 px-3.5 py-3 text-left transition hover:border-accent"
+        >
+          <span>
+            <span className="text-[13.5px] font-semibold">🎵 Fingerstyle picking</span>
+            <span className="block text-[11.5px] text-faint">
+              Pluck the strings one at a time instead of strumming.
+            </span>
+          </span>
+          <span
+            className={`relative h-[22px] w-[38px] flex-none rounded-full transition ${
+              fingerstyle ? "bg-accent" : "bg-line"
+            }`}
+          >
+            <span
+              className={`absolute top-[2px] h-[18px] w-[18px] rounded-full bg-white transition-all ${
+                fingerstyle ? "left-[18px]" : "left-[2px]"
+              }`}
+            />
+          </span>
+        </button>
 
         <p className="mt-5 text-[12.5px] font-semibold text-muted">
           3 · Tempo — <span className="text-fg">{bpm} BPM</span>

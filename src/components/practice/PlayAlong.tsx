@@ -164,7 +164,7 @@ export default function PlayAlong({
                     fontSize: "clamp(18px, 3.5vw, 28px)",
                   }}
                 >
-                  {s === "D" ? "↓" : s === "U" ? "↑" : "·"}
+                  {s === "D" ? "↓" : s === "U" ? "↑" : s === "P" ? "●" : "·"}
                 </span>
               );
             })}
@@ -259,7 +259,7 @@ export default function PlayAlong({
                       : "border-line bg-panel text-faint opacity-40"
                 }`}
               >
-                {s === "D" ? "↓" : s === "U" ? "↑" : "·"}
+                {s === "D" ? "↓" : s === "U" ? "↑" : s === "P" ? "●" : "·"}
               </span>
             );
           })}

@@ -8,7 +8,8 @@ import { useProgress } from "@/state/progress";
 import { useSettings } from "@/state/settings";
 
 const CHORD = "Em"; // strumming trainer uses one easy chord so focus stays on the hand
-const NEXT_STEP: Record<StrumStep, StrumStep> = { D: "U", U: "", "": "D" };
+// The custom builder cycles strum directions only (fingerpicking isn't editable here).
+const NEXT_STEP: Record<"D" | "U" | "", StrumStep> = { D: "U", U: "", "": "D" };
 const START_STEPS: StrumStep[] = ["D", "", "D", "U", "", "U", "D", "U"];
 
 export default function StrumTrainer() {
@@ -74,7 +75,9 @@ export default function StrumTrainer() {
 
   // Tap a slot to cycle it: down → up → rest. Applies live to the engine.
   const editStep = (i: number) => {
-    const next = customSteps.map((s, idx) => (idx === i ? NEXT_STEP[s] : s));
+    const next = customSteps.map((s, idx) =>
+      idx === i ? NEXT_STEP[s === "P" ? "" : s] : s,
+    );
     setCustomSteps(next);
     setContent([CHORD], { ...customPattern, steps: next });
   };
@@ -164,7 +167,7 @@ export default function StrumTrainer() {
                       : `border-line bg-panel text-faint ${isBeat ? "opacity-60" : "opacity-40"}`
                 }`}
               >
-                {s === "D" ? "↓" : s === "U" ? "↑" : "·"}
+                {s === "D" ? "↓" : s === "U" ? "↑" : s === "P" ? "●" : "·"}
               </Slot>
             );
           })}
