@@ -33,7 +33,8 @@ npm run lint      # eslint
   synth metronome click. Mic pitch detection (YIN/autocorrelation + FFT) powers the tuner and
   Listen mode.
 - **Zustand + localStorage** — progress (known chords, XP, streak, bests, saved loops, completed
-  lessons, per-day practice log). No backend yet — see `DEPLOYMENT.md` for the planned sync.
+  lessons, per-day practice log).
+- **Supabase (optional)** — accounts + cross-device sync, off until keys are set (`SUPABASE_SETUP.md`).
 
 ## Structure
 
@@ -69,7 +70,8 @@ Guitar samples are from [nbrosowsky/tonejs-instruments](https://github.com/nbros
 
 - **Guitar only** — the data layer is instrument-agnostic, so ukulele/piano is mostly new
   shapes + samples.
-- **No accounts** — progress is local to the browser. Cloud sync is scoped in `DEPLOYMENT.md`.
+- **Accounts & cloud sync are built but off by default** — the app runs fully local until you add
+  Supabase keys; then progress syncs across devices. Turn it on with `SUPABASE_SETUP.md`.
 - **No real songs** — all loops are generated; no licensed tabs.
 - App name **"Cadence" is a placeholder** — rename in `src/app/layout.tsx`,
   `src/components/SideNav.tsx`, and `src/app/page.tsx`.

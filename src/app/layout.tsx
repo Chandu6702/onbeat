@@ -5,6 +5,7 @@ import BottomNav from "@/components/BottomNav";
 import SideNav from "@/components/SideNav";
 import Onboarding from "@/components/Onboarding";
 import ThemeApplier from "@/components/ThemeApplier";
+import SyncProvider from "@/components/SyncProvider";
 
 const sora = Sora({
   variable: "--font-sora",
@@ -32,6 +33,7 @@ export default function RootLayout({
     <html lang="en" className={`${sora.variable} ${inter.variable} h-full antialiased`}>
       <body className="min-h-full">
         <ThemeApplier />
+        <SyncProvider />
         <div className="flex min-h-dvh">
           <SideNav />
           <div className="flex min-w-0 flex-1 flex-col">

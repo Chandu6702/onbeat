@@ -36,6 +36,74 @@ interface ProgressState {
   addCreation: (c: Creation) => void;
   completeOnboarding: (chords: string[], goal: PracticeGoal | null) => void;
   markLessonDone: (id: string) => void;
+  /** Merge a remote snapshot (from cloud sync) into local state. */
+  mergeRemote: (data: Partial<ProgressData>) => void;
+}
+
+// The persisted, syncable slice of the store (no actions). This is exactly what
+// cloud sync reads and writes.
+export type ProgressData = {
+  knownChords: string[];
+  xp: number;
+  streak: number;
+  lastPracticeDate: string | null;
+  dailyGoalMin: number;
+  bestChangesPerMin: number;
+  creations: Creation[];
+  onboarded: boolean;
+  goal: PracticeGoal | null;
+  completedLessons: string[];
+  sessions: number;
+  practiceLog: Record<string, number>;
+};
+
+/** Snapshot the syncable data out of the live store state. */
+export function exportProgress(s: ProgressState): ProgressData {
+  return {
+    knownChords: s.knownChords,
+    xp: s.xp,
+    streak: s.streak,
+    lastPracticeDate: s.lastPracticeDate,
+    dailyGoalMin: s.dailyGoalMin,
+    bestChangesPerMin: s.bestChangesPerMin,
+    creations: s.creations,
+    onboarded: s.onboarded,
+    goal: s.goal,
+    completedLessons: s.completedLessons,
+    sessions: s.sessions,
+    practiceLog: s.practiceLog,
+  };
+}
+
+const uniq = (a: string[]) => Array.from(new Set(a));
+
+// Conservative merge so syncing across devices never loses or double-counts:
+// bests take the max, collections union, the practice log keeps the busier day.
+export function mergeProgress(local: ProgressData, remote: Partial<ProgressData>): ProgressData {
+  const log: Record<string, number> = { ...local.practiceLog };
+  for (const [day, n] of Object.entries(remote.practiceLog ?? {})) {
+    log[day] = Math.max(log[day] ?? 0, n);
+  }
+  const creationsById = new Map<string, Creation>();
+  for (const c of [...local.creations, ...(remote.creations ?? [])]) creationsById.set(c.id, c);
+
+  const laterDate = (a: string | null, b: string | null | undefined) =>
+    !a ? (b ?? null) : !b ? a : a >= b ? a : b;
+
+  return {
+    knownChords: uniq([...local.knownChords, ...(remote.knownChords ?? [])]),
+    xp: Math.max(local.xp, remote.xp ?? 0),
+    streak: Math.max(local.streak, remote.streak ?? 0),
+    lastPracticeDate: laterDate(local.lastPracticeDate, remote.lastPracticeDate),
+    dailyGoalMin: local.dailyGoalMin ?? remote.dailyGoalMin ?? 10,
+    bestChangesPerMin: Math.max(local.bestChangesPerMin, remote.bestChangesPerMin ?? 0),
+    creations: Array.from(creationsById.values()).sort((a, b) => b.createdAt - a.createdAt),
+    onboarded: local.onboarded || Boolean(remote.onboarded),
+    goal: local.goal ?? remote.goal ?? null,
+    completedLessons: uniq([...local.completedLessons, ...(remote.completedLessons ?? [])]),
+    sessions: Math.max(local.sessions, remote.sessions ?? 0),
+    practiceLog: log,
+  };
 }
 
 function todayStr(): string {
@@ -110,6 +178,8 @@ export const useProgress = create<ProgressState>()(
       completeOnboarding: (chords, goal) =>
         // Honour an empty pick — "start gently" means no chords claimed yet.
         set({ knownChords: chords, goal, onboarded: true }),
+
+      mergeRemote: (data) => set((s) => mergeProgress(exportProgress(s), data)),
     }),
     {
       name: "cadence-progress",

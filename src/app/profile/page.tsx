@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useProgress, useHasHydrated } from "@/state/progress";
 import { levelStatus, type LevelProgress } from "@/data/levels";
 import PracticeCalendar from "@/components/profile/PracticeCalendar";
+import AccountPanel from "@/components/profile/AccountPanel";
 
 function Stat({ n, label, color }: { n: string | number; label: string; color?: string }) {
   return (
@@ -64,6 +65,8 @@ export default function ProfilePage() {
       <div className="mt-3">
         <PracticeCalendar />
       </div>
+
+      <AccountPanel />
 
       <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">
         Chords you know
