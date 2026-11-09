@@ -128,7 +128,7 @@ function TheoryInner() {
   const [openId, setOpenId] = useState<string | null>(null);
   // Apply a ?lesson= deep-link after mount (avoids an SSR/client mismatch).
   useEffect(() => {
-    if (lessonParam) setOpenId(lessonParam);
+    if (lessonParam) queueMicrotask(() => setOpenId(lessonParam));
   }, [lessonParam]);
 
   if (openId) {

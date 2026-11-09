@@ -20,10 +20,11 @@ function LearnInner() {
   // A ?chord= deep-link jumps straight to the chord in the browse library
   // (applied after mount to avoid an SSR/client hydration mismatch).
   useEffect(() => {
-    if (initialChord) {
-      setView("browse");
-      setTab("chords");
-    }
+    if (initialChord)
+      queueMicrotask(() => {
+        setView("browse");
+        setTab("chords");
+      });
   }, [initialChord]);
 
   return (

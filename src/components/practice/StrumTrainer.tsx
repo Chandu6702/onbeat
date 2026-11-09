@@ -3,13 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import { usePracticeEngine } from "@/audio/usePracticeEngine";
 import { PATTERNS, getPattern } from "@/data/patterns";
+import type { StrumPattern, StrumStep } from "@/data/types";
 import { useProgress } from "@/state/progress";
 import { useSettings } from "@/state/settings";
 
 const CHORD = "Em"; // strumming trainer uses one easy chord so focus stays on the hand
+const NEXT_STEP: Record<StrumStep, StrumStep> = { D: "U", U: "", "": "D" };
+const START_STEPS: StrumStep[] = ["D", "", "D", "U", "", "U", "D", "U"];
 
 export default function StrumTrainer() {
   const [patternId, setPatternId] = useState(PATTERNS[1].id);
+  const [custom, setCustom] = useState(false);
+  const [customSteps, setCustomSteps] = useState<StrumStep[]>(START_STEPS);
   const [bpm, setBpmState] = useState(80);
   const [metro, setMetro] = useState(true);
   const recorded = useRef(false);
@@ -19,7 +24,14 @@ export default function StrumTrainer() {
   const transpose = useSettings((s) => s.transpose);
   const instrument = useSettings((s) => s.instrument);
 
-  const pattern = getPattern(patternId);
+  const customPattern: StrumPattern = {
+    id: "custom",
+    name: "Your pattern",
+    genre: "Folk",
+    difficulty: "med",
+    steps: customSteps,
+  };
+  const pattern = custom ? customPattern : getPattern(patternId);
 
   const {
     ui,
@@ -50,8 +62,21 @@ export default function StrumTrainer() {
   useEffect(() => setInstrument(instrument), [instrument, setInstrument]);
 
   const choosePattern = (id: string) => {
+    setCustom(false);
     setPatternId(id);
     setContent([CHORD], getPattern(id));
+  };
+
+  const chooseCustom = () => {
+    setCustom(true);
+    setContent([CHORD], { ...customPattern, steps: customSteps });
+  };
+
+  // Tap a slot to cycle it: down → up → rest. Applies live to the engine.
+  const editStep = (i: number) => {
+    const next = customSteps.map((s, idx) => (idx === i ? NEXT_STEP[s] : s));
+    setCustomSteps(next);
+    setContent([CHORD], { ...customPattern, steps: next });
   };
 
   const onToggle = () => {
@@ -90,6 +115,14 @@ export default function StrumTrainer() {
             </button>
           );
         })}
+        <button
+          onClick={chooseCustom}
+          className={`rounded-full border px-3 py-1.5 text-[12.5px] font-semibold ${
+            custom ? "border-accent bg-panel-2 text-fg" : "border-line bg-panel text-muted"
+          }`}
+        >
+          ＋ Custom
+        </button>
       </div>
 
       <div className="overflow-hidden rounded-[20px] border border-line bg-gradient-to-b from-[#121524] to-[#0e111c] px-4 py-7 text-center">
@@ -109,17 +142,21 @@ export default function StrumTrainer() {
 
         <div className="mb-1 font-display text-[15px] font-semibold text-muted">{pattern.name}</div>
         <div className="mb-5 text-xs uppercase tracking-[0.12em] text-faint">
-          {ui.isCountIn ? "count in…" : `on ${CHORD}`}
+          {ui.isCountIn ? "count in…" : custom ? "tap slots to edit" : `on ${CHORD}`}
         </div>
 
         <div className="flex flex-wrap justify-center gap-2.5">
           {pattern.steps.map((s, i) => {
             const on = ui.playing && ui.step === i && !!s;
             const isBeat = i % 2 === 0;
+            const Slot = custom ? "button" : "span";
             return (
-              <span
+              <Slot
                 key={i}
+                onClick={custom ? () => editStep(i) : undefined}
                 className={`grid h-[46px] w-[34px] place-items-center rounded-[10px] border text-[20px] font-bold transition-all duration-75 ${
+                  custom ? "cursor-pointer hover:border-accent" : ""
+                } ${
                   on
                     ? "-translate-y-1 border-go bg-go text-[#06231a]"
                     : s
@@ -128,7 +165,7 @@ export default function StrumTrainer() {
                 }`}
               >
                 {s === "D" ? "↓" : s === "U" ? "↑" : "·"}
-              </span>
+              </Slot>
             );
           })}
         </div>
