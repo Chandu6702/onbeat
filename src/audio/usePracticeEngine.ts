@@ -73,6 +73,10 @@ export function usePracticeEngine(config: EngineConfig) {
     [],
   );
   const previewChord = useCallback((name: string) => engineRef.current?.previewChord(name), []);
+  const previewNotes = useCallback(
+    (midis: number[], harmonic?: boolean) => engineRef.current?.previewNotes(midis, harmonic),
+    [],
+  );
 
   return {
     ui,
@@ -88,5 +92,6 @@ export function usePracticeEngine(config: EngineConfig) {
     setMode,
     setContent,
     previewChord,
+    previewNotes,
   };
 }

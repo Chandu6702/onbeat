@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import ChordLibrary from "@/components/learn/ChordLibrary";
 import PatternList from "@/components/learn/PatternList";
 import GenreList from "@/components/learn/GenreList";
@@ -21,6 +22,22 @@ export default function LearnPage() {
           🎸 Guitar
         </div>
       </div>
+
+      <Link
+        href="/theory"
+        className="mb-3 flex items-center gap-3 rounded-2xl border border-accent/40 bg-gradient-to-br from-[#1a1836] to-[#141726] p-4 transition hover:border-accent"
+      >
+        <span className="grid h-11 w-11 flex-none place-items-center rounded-[13px] bg-accent/15 text-xl">
+          🎓
+        </span>
+        <div className="min-w-0">
+          <div className="text-[14.5px] font-semibold">Music theory — the why behind it</div>
+          <div className="text-[12.5px] text-muted">
+            Intervals, scales, and progressions in plain English, with audio.
+          </div>
+        </div>
+        <span className="ml-auto text-accent-2">→</span>
+      </Link>
 
       {/* Guide me / Browse */}
       <div className="flex gap-1 rounded-xl border border-line bg-panel p-1">

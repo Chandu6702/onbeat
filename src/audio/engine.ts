@@ -133,6 +133,19 @@ export class PracticeEngine {
     });
   }
 
+  /** Play an arbitrary set of notes — melodic (one at a time) or harmonic. */
+  async previewNotes(midis: number[], harmonic = false) {
+    await Tone.start();
+    const now = Tone.now();
+    const strings = this.guitar.strings;
+    const semis = this.cfg.transpose ?? 0;
+    const gap = harmonic ? NOTE_SPREAD : 0.42;
+    midis.forEach((m, i) => {
+      const note = Tone.Frequency(m + semis, "midi").toNote();
+      strings[i % strings.length].triggerAttack(note, now + i * gap);
+    });
+  }
+
   /** Preview a single chord immediately (for the chord library / create picker). */
   async previewChord(chordName: string) {
     await Tone.start();

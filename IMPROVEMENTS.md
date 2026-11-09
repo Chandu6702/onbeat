@@ -66,6 +66,34 @@ Reframing: the "tap a chord to hear it" button is only a *preview*. The real pro
       add generated loops as Verse/Chorus/… sections, then play or save the whole song.
       (`components/practice/ChangeDrill.tsx`, `app/create/page.tsx`)
 
+## Production roadmap (v2 → v3) — "not a college project"
+
+Audit (2026-09): the app is feature-complete but has production gaps. In priority order:
+
+1. **Audio quality** — _in progress._ The old thin Karplus-Strong synth is the main "college
+   project" tell. Done: clean master chain (high-pass → EQ → compressor → limiter) + acoustic
+   & electric voices (`audio/instruments.ts`). _Next:_ audible A/B tuning; optionally swap to
+   **sampled** guitars (`Tone.Sampler` + the CC-BY [tonejs-instruments](https://github.com/nbrosowsky/tonejs-instruments)
+   `guitar-acoustic`/`guitar-electric` sets served from `/public`) for maximum realism; per-string
+   voicing; a nylon/12-string option later.
+2. **Music Theory track** ("GeeksforGeeks for music") — a `/theory` section, research-backed order
+   **Intervals → Scales → Triads → Diatonic progressions → Ear training**, each lesson a short
+   explainer + audio + a quick self-check. Fills a real gap (we only have chord/pattern data today).
+3. **Real level system** — today "Level 1/2/3" is just XP thresholds. Replace with modules/levels
+   that track completion and gate suggestions (never hard-lock), tying Learn + Practice + Theory
+   into one curriculum.
+4. **Ear training + Listen mode** — mic scores whether you played the right chord/interval in time
+   (reuses the tuner's mic setup). The true hands-free payoff.
+5. **Backend + accounts** — move progress off localStorage to real sync (Supabase or Next API +
+   Postgres), so progress survives a browser clear and follows the user across devices.
+6. **Deploy + rename + test coverage** — ship to a URL, drop the "Cadence" placeholder, add
+   component/e2e tests beyond the pure-logic units.
+
+Research sources: browser guitar synthesis vs sampling (Tone.js docs; tonejs-instruments);
+web-audio amp/cabinet & acoustic sim ([bobrov.dev](https://bobrov.dev/blog/web-audio-for-electric-guitar-cabinet-emulation/));
+beginner theory order ([National Guitar Academy](https://nationalguitaracademy.com/music-theory/music-theory-for-beginners/),
+[StringKick](https://www.stringkick.com/blog-lessons/guitar-music-theory/)).
+
 ## Tier 4 — polish & retention
 
 - [ ] Practice calendar/history, weekly minutes, gentle streak-freeze.
