@@ -42,10 +42,12 @@ Reframing: the "tap a chord to hear it" button is only a *preview*. The real pro
 - [x] **More chords and chord *types*:** Done — 27 chords grouped by type: 7ths (G7, E7, A7,
       D7, B7), sus2/sus4, add9 (Cadd9), m7 (Am7, Em7, Dm7), power chords (E5, A5), easier F
       (Fmaj7). Each with fingerings, tips, and mistakes. (`data/chords.ts`, `ChordLibrary`)
-- [x] **More strumming patterns/types:** Done — 8 patterns tagged Easy→Hard: 16th-note pop
+- [x] **More strumming patterns/types:** Done — 8 strum patterns tagged Easy→Hard: 16th-note pop
       (new 16th grid in the engine), offbeat/reggae, palm-muted rock, metronome-only, plus the
-      originals. _Still to do: Travis-style + true arpeggio/fingerpicking (needs per-string
-      plucking, a bigger engine change)._ (`data/patterns.ts`, `audio/engine.ts`)
+      originals. **Fingerpicking now done too:** a `fingerpick` engine style plucks individual
+      strings per slot (indices into the chord, negatives from the top), with Fingerstyle
+      arpeggio, Travis picking, and Fingerstyle ballad patterns and a Fingerstyle toggle in
+      Create. (`data/patterns.ts`, `audio/engine.ts`, `data/types.ts`)
 - [x] **Proper, research-backed order:** Done — guided path re-sequenced to Em → Am → D → G → C,
       drilling each transition before adding the next chord; Em–C–G–D is the first real loop.
       Change-drill pairs and library groups sorted by difficulty consistently. (`data/path.ts`,
@@ -97,7 +99,10 @@ beginner theory order ([National Guitar Academy](https://nationalguitaracademy.c
 
 ## Tier 4 — polish & retention
 
-- [ ] Practice calendar/history, weekly minutes, gentle streak-freeze.
+- [x] Practice calendar/history — a GitHub-style contribution heatmap (last 13 weeks) on
+      Profile with this-week / days-active-30d / total-session counts, backed by a per-day
+      practice log in the store (schema v4). (`components/profile/PracticeCalendar.tsx`)
+      _Still open: weekly-minutes total, gentle streak-freeze._
 - [ ] Clearer empty/finished states, richer copy, a sound-on prompt.
 - [ ] Deploy to a live URL; rename from the placeholder "Cadence."
 
