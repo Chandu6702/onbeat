@@ -87,9 +87,10 @@ Audit (2026-09): the app is feature-complete but has production gaps. In priorit
    computed level. Nothing is hard-locked. (`data/levels.ts`, `app/journey/page.tsx`)
 4. **Ear training + Listen mode** — mic scores whether you played the right chord/interval in time
    (reuses the tuner's mic setup). The true hands-free payoff.
-5. **Backend + accounts** — move progress off localStorage to real sync (Supabase free tier), so
-   progress survives a browser clear and follows the user across devices. **Planned in detail in
-   `DEPLOYMENT.md` (Phase 2)** — schema, RLS, local-first sync, and migration.
+5. **Backend + accounts** — _built (opt-in)._ Supabase email sign-in + cross-device sync, local-
+   first with a conservative merge, off until `NEXT_PUBLIC_SUPABASE_*` keys are set. Turn it on
+   with `SUPABASE_SETUP.md`. (`src/lib/supabase.ts`, `src/lib/progressSync.ts`,
+   `components/SyncProvider.tsx`, `components/profile/AccountPanel.tsx`)
 6. **Deploy + rename + test coverage** — ship to a URL (free; **`DEPLOYMENT.md` Phase 1** — the
    app is fully static, so Vercel/Render/Cloudflare Pages all work for $0), drop the "Cadence"
    placeholder, add component/e2e tests beyond the pure-logic units.
