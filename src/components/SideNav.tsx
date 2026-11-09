@@ -2,10 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useProgress, useHasHydrated } from "@/state/progress";
 import { NAV_ITEMS, NavIcon } from "./nav-items";
 
 export default function SideNav() {
   const path = usePathname();
+  const hydrated = useHasHydrated();
+  const streak = useProgress((s) => s.streak);
+  const shownStreak = hydrated ? streak : 0;
 
   return (
     <aside className="sticky top-0 hidden h-dvh w-[240px] flex-none flex-col border-r border-line bg-ink px-4 py-6 md:flex">
@@ -46,9 +50,11 @@ export default function SideNav() {
 
       <div className="mt-auto rounded-xl border border-line bg-panel p-3">
         <div className="flex items-center gap-2 text-[12.5px] font-semibold">
-          <span className="h-[7px] w-[7px] rounded-full bg-beat" /> 4-day streak
+          <span className="h-[7px] w-[7px] rounded-full bg-beat" /> {shownStreak}-day streak
         </div>
-        <p className="mt-1 text-[11px] text-faint">Keep it going — practice today.</p>
+        <p className="mt-1 text-[11px] text-faint">
+          {shownStreak > 0 ? "Keep it going — practice today." : "Practice today to start a streak."}
+        </p>
       </div>
     </aside>
   );
