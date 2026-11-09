@@ -45,25 +45,30 @@
   --color-pink: #d64d7e;
 }
 
-html,
-body {
-  height: 100%;
+html {
+  min-height: 100%;
+  /* Background lives on <html> and is fixed to the viewport so it always covers
+     the whole canvas — no seam when the page scrolls past one screen. */
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #171a2b 0%, rgba(23, 26, 43, 0) 60%),
+    var(--color-ink);
+  background-attachment: fixed;
+}
+
+:root[data-theme="light"] {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #e9edfb 0%, rgba(233, 237, 251, 0) 60%),
+    var(--color-ink);
+  background-attachment: fixed;
 }
 
 body {
   margin: 0;
-  background:
-    radial-gradient(1200px 600px at 50% -10%, #171a2b 0%, rgba(23, 26, 43, 0) 60%),
-    var(--color-ink);
+  min-height: 100%;
+  background: transparent;
   color: var(--color-fg);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
-}
-
-:root[data-theme="light"] body {
-  background:
-    radial-gradient(1200px 600px at 50% -10%, #e9edfb 0%, rgba(233, 237, 251, 0) 60%),
-    var(--color-ink);
 }
 
 @media (prefers-reduced-motion: reduce) {

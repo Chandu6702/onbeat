@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CHORDS } from "@/data/chords";
 import Fretboard from "@/components/Fretboard";
 import BrandMark from "@/components/BrandMark";
@@ -25,7 +25,19 @@ export default function Onboarding() {
   const [goal, setGoal] = useState<PracticeGoal | null>(null);
 
   // Only after hydration do we trust the persisted flag (avoids a flash on SSR).
-  if (!hydrated || onboarded) return null;
+  const open = hydrated && !onboarded;
+
+  // Lock the page behind the overlay so there aren't two scrollbars.
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  if (!open) return null;
 
   const toggle = (name: string) =>
     setChords((c) => (c.includes(name) ? c.filter((x) => x !== name) : [...c, name]));
@@ -76,20 +88,20 @@ export default function Onboarding() {
             <p className="mt-1.5 text-[13.5px] text-muted">
               Pick any you can already play. Not sure? Leave it blank — we&apos;ll start you gently.
             </p>
-            <div className="mt-5 grid grid-cols-3 gap-3 sm:grid-cols-4">
+            <div className="mt-4 grid grid-cols-4 gap-2">
               {ALL_CHORDS.map((c) => {
                 const on = chords.includes(c);
                 return (
                   <button
                     key={c}
                     onClick={() => toggle(c)}
-                    className={`rounded-[11px] border px-2.5 pb-2.5 pt-3 text-center transition ${
+                    className={`rounded-[10px] border px-1.5 pb-2 pt-2 text-center transition ${
                       on ? "border-accent-2 bg-accent/15" : "border-line bg-panel"
                     }`}
                   >
-                    <div className="mb-0.5 font-display text-[16px] font-bold">{c}</div>
+                    <div className="mb-0.5 font-display text-[13px] font-bold">{c}</div>
                     <div className="flex justify-center">
-                      <Fretboard shape={CHORDS[c].shape} />
+                      <Fretboard shape={CHORDS[c].shape} size={38} />
                     </div>
                   </button>
                 );
