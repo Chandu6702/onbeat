@@ -22,27 +22,50 @@ export default function PlayAlong({
   const [bpm, setBpmState] = useState(startBpm);
   const [metro, setMetro] = useState(true);
   const [stand, setStand] = useState(false);
+  const [loopOn, setLoopOn] = useState(false);
+  const [loopA, setLoopA] = useState(0);
+  const [loopB, setLoopB] = useState(progression.length - 1);
   const recorded = useRef(false);
   const recordPractice = useProgress((s) => s.recordPractice);
   const countInPref = useSettings((s) => s.countIn);
   const metroVol = useSettings((s) => s.metronomeVolume);
   const transpose = useSettings((s) => s.transpose);
 
-  const { ui, toggle, stop, setBpm, setMetronome, setMetronomeVolume, setCountIn, setTranspose } =
-    usePracticeEngine({
-      bpm: startBpm,
-      progression,
-      pattern,
-      mode: "play",
-      metronome: true,
-      countInBars: countInPref ? 1 : 0,
-      metronomeVolume: metroVol,
-      transpose,
-    });
+  const {
+    ui,
+    toggle,
+    stop,
+    setBpm,
+    setMetronome,
+    setMetronomeVolume,
+    setCountIn,
+    setTranspose,
+    setContent,
+  } = usePracticeEngine({
+    bpm: startBpm,
+    progression,
+    pattern,
+    mode: "play",
+    metronome: true,
+    countInBars: countInPref ? 1 : 0,
+    metronomeVolume: metroVol,
+    transpose,
+  });
+
+  // A–B loop: when on, only bars [a..b] play and are shown. Clamp to range.
+  const maxBar = progression.length - 1;
+  const a = Math.min(loopA, maxBar);
+  const b = Math.min(Math.max(loopB, a), maxBar);
+  const activeProgression = loopOn ? progression.slice(a, b + 1) : progression;
+  const canLoop = progression.length > 1;
 
   useEffect(() => setCountIn(countInPref ? 1 : 0), [countInPref, setCountIn]);
   useEffect(() => setMetronomeVolume(metroVol), [metroVol, setMetronomeVolume]);
   useEffect(() => setTranspose(transpose), [transpose, setTranspose]);
+  // Re-point the engine whenever the looped range (or pattern) changes.
+  useEffect(() => {
+    setContent(activeProgression, pattern);
+  }, [activeProgression.join(","), pattern, setContent]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onToggle = () => {
     if (!ui.playing && !recorded.current) {
@@ -67,7 +90,7 @@ export default function PlayAlong({
   // Performance / "stand" mode: a big, high-contrast fullscreen view you can
   // read from across the room. Auto-advancing, so nothing to tap while playing.
   if (stand) {
-    const nextChord = progression[(ui.bar + 1) % progression.length];
+    const nextChord = activeProgression[(ui.bar + 1) % activeProgression.length];
     return (
       <div className="fixed inset-0 z-50 flex flex-col bg-[#05060a] text-center">
         <div className="flex items-center justify-between px-4 py-3">
@@ -101,7 +124,7 @@ export default function PlayAlong({
             className="font-display font-bold leading-none text-white"
             style={{ fontSize: "clamp(80px, 24vw, 220px)" }}
           >
-            {ui.chord || progression[0]}
+            {ui.chord || activeProgression[0]}
           </div>
 
           <div
@@ -176,16 +199,16 @@ export default function PlayAlong({
         </div>
 
         <div className="bg-gradient-to-b from-white to-[#c9c6ff] bg-clip-text font-display text-[64px] font-bold leading-none tracking-tight text-transparent">
-          {ui.chord || progression[0]}
+          {ui.chord || activeProgression[0]}
         </div>
         <div className="mt-2 text-xs uppercase tracking-[0.12em] text-faint">
           {ui.isCountIn ? "count in…" : "now playing"}
         </div>
 
         <div className="my-5 flex min-h-[56px] flex-wrap items-center justify-center gap-2.5">
-          {progression.map((c, i) => {
+          {activeProgression.map((c, i) => {
             const cur = ui.playing && !ui.isCountIn && ui.bar === i;
-            const next = ui.playing && !ui.isCountIn && (ui.bar + 1) % progression.length === i;
+            const next = ui.playing && !ui.isCountIn && (ui.bar + 1) % activeProgression.length === i;
             return (
               <div
                 key={i}
@@ -279,6 +302,77 @@ export default function PlayAlong({
           }}
         />
       </div>
+
+      {canLoop && (
+        <div className="mt-4 rounded-[13px] border border-line bg-panel p-3.5">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-[13.5px] font-semibold">A–B loop</div>
+              <div className="text-[12px] text-muted">Repeat just the hard bars.</div>
+            </div>
+            <button
+              role="switch"
+              aria-checked={loopOn}
+              aria-label="A–B loop"
+              onClick={() => setLoopOn((v) => !v)}
+              className={`relative h-7 w-12 rounded-full transition-colors ${
+                loopOn ? "bg-accent" : "bg-panel-2 border border-line"
+              }`}
+            >
+              <span
+                className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-white shadow transition-all ${
+                  loopOn ? "left-[26px]" : "left-[3px]"
+                }`}
+              />
+            </button>
+          </div>
+
+          {loopOn && (
+            <div className="mt-3 flex items-center justify-center gap-5 text-[13px]">
+              <div className="flex items-center gap-2">
+                <span className="text-muted">From bar</span>
+                <button
+                  onClick={() => setLoopA(Math.max(0, a - 1))}
+                  disabled={a <= 0}
+                  aria-label="From bar down"
+                  className="grid h-7 w-7 place-items-center rounded-full border border-line bg-panel-2 font-bold disabled:opacity-40"
+                >
+                  −
+                </button>
+                <span className="w-4 text-center font-display font-bold">{a + 1}</span>
+                <button
+                  onClick={() => setLoopA(Math.min(b, a + 1))}
+                  disabled={a >= b}
+                  aria-label="From bar up"
+                  className="grid h-7 w-7 place-items-center rounded-full border border-line bg-panel-2 font-bold disabled:opacity-40"
+                >
+                  +
+                </button>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-muted">To bar</span>
+                <button
+                  onClick={() => setLoopB(Math.max(a, b - 1))}
+                  disabled={b <= a}
+                  aria-label="To bar down"
+                  className="grid h-7 w-7 place-items-center rounded-full border border-line bg-panel-2 font-bold disabled:opacity-40"
+                >
+                  −
+                </button>
+                <span className="w-4 text-center font-display font-bold">{b + 1}</span>
+                <button
+                  onClick={() => setLoopB(Math.min(maxBar, b + 1))}
+                  disabled={b >= maxBar}
+                  aria-label="To bar up"
+                  className="grid h-7 w-7 place-items-center rounded-full border border-line bg-panel-2 font-bold disabled:opacity-40"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <button
         onClick={() => setStand(true)}
