@@ -20,6 +20,7 @@ export default function PlayAlong({
   const pattern = useMemo(() => getPattern(patternId), [patternId]);
   const [bpm, setBpmState] = useState(startBpm);
   const [metro, setMetro] = useState(true);
+  const [stand, setStand] = useState(false);
   const recorded = useRef(false);
   const recordPractice = useProgress((s) => s.recordPractice);
 
@@ -51,6 +52,100 @@ export default function PlayAlong({
   };
 
   const tempoPct = Math.round(((bpm - 50) / (140 - 50)) * 100);
+
+  // Performance / "stand" mode: a big, high-contrast fullscreen view you can
+  // read from across the room. Auto-advancing, so nothing to tap while playing.
+  if (stand) {
+    const nextChord = progression[(ui.bar + 1) % progression.length];
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col bg-[#05060a] text-center">
+        <div className="flex items-center justify-between px-4 py-3">
+          <span className="text-xs uppercase tracking-[0.14em] text-faint">
+            {ui.isCountIn ? "count in…" : ui.playing ? "now playing" : "ready"}
+          </span>
+          <button
+            onClick={() => setStand(false)}
+            className="rounded-full border border-line bg-panel px-3 py-1.5 text-[12.5px] font-semibold text-muted transition hover:text-fg"
+          >
+            Exit
+          </button>
+        </div>
+
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-hidden px-4">
+          <div className="mb-5 flex justify-center gap-4">
+            {[0, 1, 2, 3].map((b) => {
+              const on = ui.playing && ui.beat === b;
+              return (
+                <span
+                  key={b}
+                  className={`h-4 w-4 rounded-full transition-transform duration-75 ${
+                    on ? (b === 0 ? "scale-150 bg-accent-2" : "scale-150 bg-beat") : "bg-[#2a3048]"
+                  }`}
+                />
+              );
+            })}
+          </div>
+
+          <div
+            className="font-display font-bold leading-none text-white"
+            style={{ fontSize: "clamp(80px, 24vw, 220px)" }}
+          >
+            {ui.chord || progression[0]}
+          </div>
+
+          <div
+            className="mt-3 font-semibold text-muted"
+            style={{ fontSize: "clamp(16px, 4vw, 26px)" }}
+          >
+            {ui.playing && !ui.isCountIn ? (
+              <>
+                next · <span className="text-fg">{nextChord}</span>
+              </>
+            ) : (
+              " "
+            )}
+          </div>
+
+          <div className="mt-7 flex max-w-full flex-wrap justify-center gap-2.5">
+            {pattern.steps.map((s, i) => {
+              const on = ui.playing && ui.step === i && !!s;
+              return (
+                <span
+                  key={i}
+                  className={`grid place-items-center rounded-xl border font-bold transition-all duration-75 ${
+                    on
+                      ? "-translate-y-1 border-go bg-go text-[#06231a]"
+                      : s
+                        ? "border-line bg-panel text-muted"
+                        : "border-line bg-panel text-faint opacity-40"
+                  }`}
+                  style={{
+                    height: "clamp(40px, 8vw, 60px)",
+                    width: "clamp(30px, 6vw, 46px)",
+                    fontSize: "clamp(18px, 3.5vw, 28px)",
+                  }}
+                >
+                  {s === "D" ? "↓" : s === "U" ? "↑" : "·"}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="flex flex-none items-center justify-center pb-8">
+          <button
+            onClick={onToggle}
+            aria-label={ui.playing ? "Pause" : "Play"}
+            className="grid h-24 w-24 place-items-center rounded-full bg-accent shadow-[0_10px_30px_rgba(124,92,255,0.45)] transition-transform active:scale-95"
+          >
+            <svg viewBox="0 0 24 24" className="h-10 w-10 fill-white">
+              {ui.playing ? <path d="M7 5h4v14H7zM13 5h4v14h-4z" /> : <path d="M8 5v14l11-7z" />}
+            </svg>
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -173,6 +268,13 @@ export default function PlayAlong({
           }}
         />
       </div>
+
+      <button
+        onClick={() => setStand(true)}
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-[13px] border border-line bg-panel py-2.5 text-[13px] font-semibold text-muted transition hover:border-accent hover:text-fg"
+      >
+        ⛶ Stand mode — big-screen view
+      </button>
 
       <p className="mt-3.5 text-center text-xs leading-relaxed text-faint">
         Watch the highlighted chord — change just before the next one lands. {title}.

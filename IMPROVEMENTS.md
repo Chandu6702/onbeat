@@ -21,14 +21,17 @@ Reframing: the "tap a chord to hear it" button is only a *preview*. The real pro
 ## Tier 1 — highest impact (solves the core complaints)
 
 - [ ] **Built-in tuner (mic).** Needed before playing; genuinely hands-free. Effort: med.
-- [ ] **Fix the change-drill for real playing.** Tapping each change is the "can't hit
-      buttons while playing" problem. Replace with a **count-in + auto-tempo** mode (change
-      on the beat, no tapping); optionally **mic auto-count**. Effort: med.
-- [ ] **Chord detail pages.** Finger numbers, common mistakes, a how-to-fret tip, audio, and
-      a "practice this" button — not just a sound. Effort: low–med.
+- [x] **Fix the change-drill for real playing.** ~~Tapping each change is the "can't hit
+      buttons while playing" problem.~~ Done: count-in + auto-tempo mode — the loop switches
+      chords for you on the beat, no tapping. Score is changes/min; honest self-report gates
+      the personal best (no mic yet). (`components/practice/ChangeDrill.tsx`)
+- [x] **Chord detail pages.** Done: finger numbers on the diagram, finger-by-finger breakdown,
+      how-to-fret tip, common mistakes, "Hear it" audio, and a "Practice this" deep-link.
+      (`components/learn/ChordDetail.tsx`, data on `data/chords.ts`)
 - [ ] **About / How-to page + first-run onboarding.** Explain hands-free use; onboarding asks
       which chords you know + your goal, so the app personalizes. Effort: low.
-- [ ] **Performance mode.** Big, high-contrast play view readable from a music stand. Effort: low.
+- [x] **Performance mode.** Done: a fullscreen, high-contrast "Stand mode" on play-along —
+      huge chord, next-chord cue, big beat + strum guide, auto-advancing. (`components/practice/PlayAlong.tsx`)
 
 ## Tier 2 — more content + proper ordering
 
