@@ -65,6 +65,7 @@ export default function ChangeDrill() {
   const [running, setRunning] = useState(false);
   const [left, setLeft] = useState(DURATION);
   const [trainer, setTrainer] = useState(false);
+  const [metro, setMetro] = useState(true);
   const [result, setResult] = useState<{
     perMin: number;
     count: number;
@@ -84,6 +85,7 @@ export default function ChangeDrill() {
     stop,
     setBpm: setEngineBpm,
     setContent,
+    setMetronome,
     setMetronomeVolume,
     setCountIn,
     setTranspose,
@@ -93,7 +95,7 @@ export default function ChangeDrill() {
     progression: pair,
     pattern: DRILL_PATTERN,
     mode: "play",
-    metronome: true,
+    metronome: metro,
     countInBars: countInPref ? 2 : 0, // one 4/4 measure of clicks to get ready
     metronomeVolume: metroVol,
     transpose,
@@ -101,6 +103,7 @@ export default function ChangeDrill() {
   });
 
   useEffect(() => setCountIn(countInPref ? 2 : 0), [countInPref, setCountIn]);
+  useEffect(() => setMetronome(metro), [metro, setMetronome]);
   useEffect(() => setMetronomeVolume(metroVol), [metroVol, setMetronomeVolume]);
   useEffect(() => setTranspose(transpose), [transpose, setTranspose]);
   useEffect(() => setInstrument(instrument), [instrument, setInstrument]);
@@ -325,6 +328,28 @@ export default function ChangeDrill() {
           <span
             className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-white shadow transition-all ${
               trainer ? "left-[26px]" : "left-[3px]"
+            }`}
+          />
+        </button>
+      </div>
+
+      <div className="mt-3 flex items-center justify-between rounded-[13px] border border-line bg-panel px-3.5 py-2.5">
+        <div className="text-left">
+          <div className="text-[13px] font-semibold">Metronome click</div>
+          <div className="text-[11.5px] text-muted">The chord shapes still flip on the beat if you turn it off.</div>
+        </div>
+        <button
+          role="switch"
+          aria-checked={metro}
+          aria-label="Metronome click"
+          onClick={() => setMetro((v) => !v)}
+          className={`relative h-7 w-12 flex-none rounded-full transition-colors ${
+            metro ? "bg-accent" : "bg-panel-2 border border-line"
+          }`}
+        >
+          <span
+            className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-white shadow transition-all ${
+              metro ? "left-[26px]" : "left-[3px]"
             }`}
           />
         </button>

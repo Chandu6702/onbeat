@@ -1,6 +1,7 @@
 "use client";
 
-import { useHasHydrated } from "@/state/progress";
+import { useState } from "react";
+import { useHasHydrated, useProgress } from "@/state/progress";
 import { useSettings, type Theme } from "@/state/settings";
 import type { InstrumentType } from "@/audio/instruments";
 
@@ -58,6 +59,9 @@ export default function SettingsPage() {
     setTranspose,
     setInstrument,
   } = useSettings();
+
+  const resetProgress = useProgress((s) => s.resetProgress);
+  const [confirmReset, setConfirmReset] = useState(false);
 
   const volPct = Math.round(metronomeVolume * 100);
   const t = hydrated ? transpose : 0;
@@ -161,7 +165,39 @@ export default function SettingsPage() {
         </Row>
       </div>
 
-      <p className="mt-6 text-center text-xs text-faint">More options coming — A–B loop, tempo trainer.</p>
+      <div className="mt-6 rounded-2xl border border-line bg-panel p-4">
+        <div className="text-[14.5px] font-semibold">Reset progress</div>
+        <div className="mt-0.5 text-[12.5px] leading-snug text-muted">
+          Clears your known chords, streak, XP, best scores, finished lessons, practice history, and
+          saved loops on this device. Can&apos;t be undone.
+        </div>
+        {confirmReset ? (
+          <div className="mt-3 flex gap-2.5">
+            <button
+              onClick={() => {
+                resetProgress();
+                setConfirmReset(false);
+              }}
+              className="flex-1 rounded-[11px] bg-pink py-2.5 text-[13px] font-bold text-white transition active:scale-[0.98]"
+            >
+              Yes, reset everything
+            </button>
+            <button
+              onClick={() => setConfirmReset(false)}
+              className="flex-1 rounded-[11px] border border-line bg-panel-2 py-2.5 text-[13px] font-semibold text-muted transition hover:text-fg"
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setConfirmReset(true)}
+            className="mt-3 rounded-[11px] border border-pink/50 bg-panel-2 px-4 py-2.5 text-[13px] font-semibold text-pink transition hover:border-pink"
+          >
+            Reset progress
+          </button>
+        )}
+      </div>
     </>
   );
 }

@@ -38,6 +38,8 @@ interface ProgressState {
   markLessonDone: (id: string) => void;
   /** Merge a remote snapshot (from cloud sync) into local state. */
   mergeRemote: (data: Partial<ProgressData>) => void;
+  /** Wipe all progress back to a clean slate (keeps you onboarded). */
+  resetProgress: () => void;
 }
 
 // The persisted, syncable slice of the store (no actions). This is exactly what
@@ -180,6 +182,21 @@ export const useProgress = create<ProgressState>()(
         set({ knownChords: chords, goal, onboarded: true }),
 
       mergeRemote: (data) => set((s) => mergeProgress(exportProgress(s), data)),
+
+      resetProgress: () =>
+        set({
+          knownChords: [],
+          xp: 0,
+          streak: 0,
+          lastPracticeDate: null,
+          dailyGoalMin: 10,
+          bestChangesPerMin: 0,
+          creations: [],
+          goal: null,
+          completedLessons: [],
+          sessions: 0,
+          practiceLog: {},
+        }),
     }),
     {
       // localStorage key kept as the original name on purpose — renaming it

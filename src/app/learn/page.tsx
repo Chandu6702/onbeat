@@ -52,6 +52,22 @@ function LearnInner() {
         <span className="ml-auto text-accent-2">→</span>
       </Link>
 
+      <Link
+        href="/listen"
+        className="mb-3 flex items-center gap-3 rounded-2xl border border-line bg-panel p-3.5 transition hover:border-accent"
+      >
+        <span className="grid h-11 w-11 flex-none place-items-center rounded-[13px] bg-panel-2 text-xl">
+          👂
+        </span>
+        <div className="min-w-0">
+          <div className="text-[14.5px] font-semibold">Test your chords, hands-free</div>
+          <div className="text-[12.5px] text-muted">
+            Play the chords you know in Listen mode and get scored.
+          </div>
+        </div>
+        <span className="ml-auto text-accent-2">→</span>
+      </Link>
+
       {/* Path (modules) / Browse (library) */}
       <div className="flex gap-1 rounded-xl border border-line bg-panel p-1">
         {(

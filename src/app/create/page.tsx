@@ -211,6 +211,12 @@ export default function CreatePage() {
               Open in Practice →
             </Link>
           </div>
+          <Link
+            href={`/listen?chords=${loop.chords.join(",")}`}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-[13px] border border-line bg-panel py-2.5 text-[13px] font-semibold text-muted transition hover:border-accent hover:text-fg"
+          >
+            👂 Score it hands-free in Listen mode →
+          </Link>
           <button
             onClick={addSection}
             className="mt-3 w-full rounded-[13px] border border-dashed border-line bg-panel py-2.5 text-[13px] font-semibold text-muted transition hover:border-accent hover:text-fg"
