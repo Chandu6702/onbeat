@@ -229,7 +229,7 @@ function ListenInner() {
             </p>
             <button
               onClick={start}
-              className="mt-5 w-full rounded-[14px] bg-accent py-3.5 text-[15px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98]"
+              className="mt-5 w-full rounded-[14px] bg-accent py-3 text-[14px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98]"
             >
               Start listening
             </button>
@@ -308,7 +308,7 @@ function ListenInner() {
             </div>
             <button
               onClick={reset}
-              className="mt-6 w-full rounded-[14px] bg-accent py-3.5 text-[15px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98]"
+              className="mt-6 w-full rounded-[14px] bg-accent py-3 text-[14px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98]"
             >
               Go again
             </button>

@@ -178,29 +178,29 @@ export default function StrumTrainer() {
         <button
           onClick={onMetro}
           aria-label="Metronome"
-          className={`grid h-[50px] w-[50px] place-items-center rounded-full border bg-panel ${
+          className={`grid h-[42px] w-[42px] place-items-center rounded-full border bg-panel ${
             metro ? "border-beat text-beat" : "border-line text-muted"
           }`}
         >
-          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M8 2h8l3 20H5L8 2zM12 5l-1 9M12 5l3 12" />
           </svg>
         </button>
         <button
           onClick={onToggle}
           aria-label={ui.playing ? "Pause" : "Play"}
-          className="grid h-[70px] w-[70px] place-items-center rounded-full bg-accent shadow-[0_10px_30px_rgba(124,92,255,0.45)] transition-transform active:scale-95"
+          className="grid h-[58px] w-[58px] place-items-center rounded-full bg-accent shadow-[0_10px_30px_rgba(124,92,255,0.45)] transition-transform active:scale-95"
         >
-          <svg viewBox="0 0 24 24" className="h-7 w-7 fill-white">
+          <svg viewBox="0 0 24 24" className="h-6 w-6 fill-white">
             {ui.playing ? <path d="M7 5h4v14H7zM13 5h4v14h-4z" /> : <path d="M8 5v14l11-7z" />}
           </svg>
         </button>
         <button
           onClick={stop}
           aria-label="Restart"
-          className="grid h-[50px] w-[50px] place-items-center rounded-full border border-line bg-panel text-muted"
+          className="grid h-[42px] w-[42px] place-items-center rounded-full border border-line bg-panel text-muted"
         >
-          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M4 12a8 8 0 108-8M4 4v4h4" />
           </svg>
         </button>

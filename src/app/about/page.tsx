@@ -102,7 +102,7 @@ export default function AboutPage() {
 
       <Link
         href="/tuner"
-        className="mt-6 flex w-full items-center justify-center rounded-[13px] bg-accent py-3.5 text-[15px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98]"
+        className="mt-6 flex w-full items-center justify-center rounded-[13px] bg-accent py-3 text-[14px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98]"
       >
         Tune up and start →
       </Link>

@@ -110,7 +110,7 @@ export default function Home() {
         </div>
         <Link
           href={recHref}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-[13px] bg-accent px-4 py-3.5 text-[15px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98] sm:w-auto sm:px-8"
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-[13px] bg-accent px-4 py-3 text-[14px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98] sm:w-auto sm:px-8"
         >
           Continue practice →
         </Link>

@@ -60,7 +60,7 @@ export default function Onboarding() {
             </p>
             <button
               onClick={() => setStep(1)}
-              className="mt-7 w-full rounded-[14px] bg-accent py-3.5 text-[15px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98]"
+              className="mt-7 w-full rounded-[14px] bg-accent py-3 text-[14px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98]"
             >
               Let&apos;s go →
             </button>

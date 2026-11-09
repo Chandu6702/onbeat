@@ -140,7 +140,7 @@ export default function ChordDetail({ name, onBack }: { name: string; onBack: ()
 
       <Link
         href={`/practice?mode=play&chords=${chord.name}&pattern=folk-down&bpm=70`}
-        className="mt-6 flex w-full items-center justify-center rounded-[13px] bg-go py-3.5 text-[15px] font-bold text-[#06231a] transition active:scale-[0.98]"
+        className="mt-6 flex w-full items-center justify-center rounded-[13px] bg-go py-3 text-[14px] font-bold text-[#06231a] transition active:scale-[0.98]"
       >
         Practice this →
       </Link>

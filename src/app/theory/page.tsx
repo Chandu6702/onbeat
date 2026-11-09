@@ -114,7 +114,7 @@ function LessonView({
 
       <Link
         href="/practice?mode=play"
-        className="mt-6 flex w-full items-center justify-center rounded-[13px] bg-go py-3.5 text-[15px] font-bold text-[#06231a] transition active:scale-[0.98]"
+        className="mt-6 flex w-full items-center justify-center rounded-[13px] bg-go py-3 text-[14px] font-bold text-[#06231a] transition active:scale-[0.98]"
       >
         Try it in Practice →
       </Link>
