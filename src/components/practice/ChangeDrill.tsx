@@ -279,7 +279,7 @@ export default function ChangeDrill() {
       <button
         onClick={running ? cancel : start}
         disabled={!running && activePair[0] === activePair[1]}
-        className={`w-full rounded-[18px] py-6 font-display text-[20px] font-bold transition-transform active:scale-[0.98] disabled:opacity-40 ${
+        className={`w-full rounded-[14px] py-4 font-display text-[17px] font-bold transition-transform active:scale-[0.98] disabled:opacity-40 ${
           running ? "bg-panel-2 text-fg" : "bg-go text-[#06231a]"
         }`}
       >

@@ -175,9 +175,9 @@ export default function PlayAlong({
           <button
             onClick={onToggle}
             aria-label={ui.playing ? "Pause" : "Play"}
-            className="grid h-24 w-24 place-items-center rounded-full bg-accent shadow-[0_10px_30px_rgba(124,92,255,0.45)] transition-transform active:scale-95"
+            className="grid h-[72px] w-[72px] place-items-center rounded-full bg-accent shadow-[0_10px_30px_rgba(124,92,255,0.45)] transition-transform active:scale-95"
           >
-            <svg viewBox="0 0 24 24" className="h-10 w-10 fill-white">
+            <svg viewBox="0 0 24 24" className="h-8 w-8 fill-white">
               {ui.playing ? <path d="M7 5h4v14H7zM13 5h4v14h-4z" /> : <path d="M8 5v14l11-7z" />}
             </svg>
           </button>
