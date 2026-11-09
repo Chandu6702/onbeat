@@ -27,6 +27,8 @@ export interface EngineConfig {
   countInBars: number;
   /** metronome click loudness, 0..1 (default 1) */
   metronomeVolume?: number;
+  /** capo / transpose in semitones applied to all played notes (default 0) */
+  transpose?: number;
 }
 
 const NOTE_SPREAD = 0.02; // seconds between strummed strings
@@ -111,10 +113,11 @@ export class PracticeEngine {
     const chord = getChord(chordName);
     if (!chord) return;
     const strings = this.guitar.strings;
+    const semis = this.cfg.transpose ?? 0;
     const notes = chord.midi.map((m, idx) => ({ m, idx }));
     const order = dir === "U" ? [...notes].reverse() : notes;
     order.forEach((n, i) => {
-      const note = Tone.Frequency(n.m, "midi").toNote();
+      const note = Tone.Frequency(n.m + semis, "midi").toNote();
       strings[n.idx % strings.length].triggerAttack(note, time + i * NOTE_SPREAD);
     });
   }
@@ -126,8 +129,9 @@ export class PracticeEngine {
     if (!chord) return;
     const now = Tone.now();
     const strings = this.guitar.strings;
+    const semis = this.cfg.transpose ?? 0;
     chord.midi.forEach((m, i) => {
-      const note = Tone.Frequency(m, "midi").toNote();
+      const note = Tone.Frequency(m + semis, "midi").toNote();
       strings[i % strings.length].triggerAttack(note, now + i * NOTE_SPREAD);
     });
   }
@@ -173,6 +177,10 @@ export class PracticeEngine {
 
   setCountIn(bars: number) {
     this.cfg.countInBars = bars;
+  }
+
+  setTranspose(semitones: number) {
+    this.cfg.transpose = semitones;
   }
 
   setMode(mode: EngineMode) {

@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePracticeEngine } from "@/audio/usePracticeEngine";
 import { getPattern } from "@/data/patterns";
 import { getChord } from "@/data/chords";
 import type { Chord, Difficulty } from "@/data/types";
+import { useSettings } from "@/state/settings";
 import Fretboard from "@/components/Fretboard";
 
 const DIFF_LABEL: Record<Difficulty, string> = { easy: "Easy", med: "Medium", hard: "Hard" };
@@ -31,14 +33,18 @@ function fretGuide(chord: Chord): string[] {
 
 export default function ChordDetail({ name, onBack }: { name: string; onBack: () => void }) {
   const chord = getChord(name);
-  const { previewChord } = usePracticeEngine({
+  const transpose = useSettings((s) => s.transpose);
+  const { previewChord, setTranspose } = usePracticeEngine({
     bpm: 80,
     progression: [name],
     pattern: getPattern("folk-down"),
     mode: "metronome",
     metronome: false,
     countInBars: 0,
+    transpose,
   });
+
+  useEffect(() => setTranspose(transpose), [transpose, setTranspose]);
 
   if (!chord) {
     return (

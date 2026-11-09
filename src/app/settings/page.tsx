@@ -43,10 +43,22 @@ function Toggle({ on, onChange, label }: { on: boolean; onChange: () => void; la
 
 export default function SettingsPage() {
   const hydrated = useHasHydrated();
-  const { theme, lefty, countIn, metronomeVolume, setTheme, toggleLefty, toggleCountIn, setMetronomeVolume } =
-    useSettings();
+  const {
+    theme,
+    lefty,
+    countIn,
+    metronomeVolume,
+    transpose,
+    setTheme,
+    toggleLefty,
+    toggleCountIn,
+    setMetronomeVolume,
+    setTranspose,
+  } = useSettings();
 
   const volPct = Math.round(metronomeVolume * 100);
+  const t = hydrated ? transpose : 0;
+  const transposeLabel = t === 0 ? "Off" : t > 0 ? `Capo ${t}` : `${t} semitones`;
 
   return (
     <>
@@ -101,9 +113,36 @@ export default function SettingsPage() {
             }}
           />
         </div>
+
+        <Row
+          title="Capo / transpose"
+          desc="Change key without new shapes — play the same chords, hear them higher or lower."
+        >
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setTranspose(Math.max(-5, t - 1))}
+              disabled={t <= -5}
+              aria-label="Lower"
+              className="grid h-9 w-9 place-items-center rounded-full border border-line bg-panel-2 text-lg font-bold text-fg disabled:opacity-40"
+            >
+              −
+            </button>
+            <span className="w-[92px] text-center font-display text-[13.5px] font-bold">
+              {transposeLabel}
+            </span>
+            <button
+              onClick={() => setTranspose(Math.min(7, t + 1))}
+              disabled={t >= 7}
+              aria-label="Raise"
+              className="grid h-9 w-9 place-items-center rounded-full border border-line bg-panel-2 text-lg font-bold text-fg disabled:opacity-40"
+            >
+              +
+            </button>
+          </div>
+        </Row>
       </div>
 
-      <p className="mt-6 text-center text-xs text-faint">More options coming — capo, A–B loop, tempo trainer.</p>
+      <p className="mt-6 text-center text-xs text-faint">More options coming — A–B loop, tempo trainer.</p>
     </>
   );
 }

@@ -26,8 +26,9 @@ export default function PlayAlong({
   const recordPractice = useProgress((s) => s.recordPractice);
   const countInPref = useSettings((s) => s.countIn);
   const metroVol = useSettings((s) => s.metronomeVolume);
+  const transpose = useSettings((s) => s.transpose);
 
-  const { ui, toggle, stop, setBpm, setMetronome, setMetronomeVolume, setCountIn } =
+  const { ui, toggle, stop, setBpm, setMetronome, setMetronomeVolume, setCountIn, setTranspose } =
     usePracticeEngine({
       bpm: startBpm,
       progression,
@@ -36,10 +37,12 @@ export default function PlayAlong({
       metronome: true,
       countInBars: countInPref ? 1 : 0,
       metronomeVolume: metroVol,
+      transpose,
     });
 
   useEffect(() => setCountIn(countInPref ? 1 : 0), [countInPref, setCountIn]);
   useEffect(() => setMetronomeVolume(metroVol), [metroVol, setMetronomeVolume]);
+  useEffect(() => setTranspose(transpose), [transpose, setTranspose]);
 
   const onToggle = () => {
     if (!ui.playing && !recorded.current) {

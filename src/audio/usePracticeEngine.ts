@@ -63,6 +63,7 @@ export function usePracticeEngine(config: EngineConfig) {
   const setMetronome = useCallback((on: boolean) => engineRef.current?.setMetronome(on), []);
   const setMetronomeVolume = useCallback((v: number) => engineRef.current?.setMetronomeVolume(v), []);
   const setCountIn = useCallback((bars: number) => engineRef.current?.setCountIn(bars), []);
+  const setTranspose = useCallback((semis: number) => engineRef.current?.setTranspose(semis), []);
   const setMode = useCallback((m: EngineMode) => engineRef.current?.setMode(m), []);
   const setContent = useCallback(
     (progression: string[], pattern: StrumPattern) =>
@@ -80,6 +81,7 @@ export function usePracticeEngine(config: EngineConfig) {
     setMetronome,
     setMetronomeVolume,
     setCountIn,
+    setTranspose,
     setMode,
     setContent,
     previewChord,

@@ -44,6 +44,7 @@ export default function ChangeDrill() {
   const hydrated = useHasHydrated();
   const countInPref = useSettings((s) => s.countIn);
   const metroVol = useSettings((s) => s.metronomeVolume);
+  const transpose = useSettings((s) => s.transpose);
 
   const pairs = CANDIDATE_PAIRS.filter((p) => p.every((c) => known.includes(c)));
   const [pair, setPair] = useState<[string, string]>(pairs[0] ?? ["Em", "Am"]);
@@ -66,6 +67,7 @@ export default function ChangeDrill() {
     setContent,
     setMetronomeVolume,
     setCountIn,
+    setTranspose,
   } = usePracticeEngine({
     bpm: 80,
     progression: pair,
@@ -74,10 +76,12 @@ export default function ChangeDrill() {
     metronome: true,
     countInBars: countInPref ? 2 : 0, // one 4/4 measure of clicks to get ready
     metronomeVolume: metroVol,
+    transpose,
   });
 
   useEffect(() => setCountIn(countInPref ? 2 : 0), [countInPref, setCountIn]);
   useEffect(() => setMetronomeVolume(metroVol), [metroVol, setMetronomeVolume]);
+  useEffect(() => setTranspose(transpose), [transpose, setTranspose]);
 
   const clearTimer = () => {
     if (timer.current) clearInterval(timer.current);
