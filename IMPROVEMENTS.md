@@ -61,9 +61,10 @@ Reframing: the "tap a chord to hear it" button is only a *preview*. The real pro
 - [x] **A–B loop** — Done: repeat bars [a..b] of a play-along. (`components/practice/PlayAlong.tsx`)
 - [x] **Tempo trainer** — Done: the change drill nudges BPM up when you keep up, down when you
       retry. (`components/practice/ChangeDrill.tsx`)
-- [~] **Custom drills** — Done: the change drill can now drill *any* two of your known chords
-      (a "Custom" option with per-chord pickers). _Still to do: multi-section (verse/chorus) loop
-      builder in Create._ (`components/practice/ChangeDrill.tsx`)
+- [x] **Custom drills** — Done: the change drill can drill *any* two of your known chords
+      (a "Custom" option with per-chord pickers), and Create has a multi-section song builder —
+      add generated loops as Verse/Chorus/… sections, then play or save the whole song.
+      (`components/practice/ChangeDrill.tsx`, `app/create/page.tsx`)
 
 ## Tier 4 — polish & retention
 

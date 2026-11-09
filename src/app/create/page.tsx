@@ -24,6 +24,7 @@ export default function CreatePage() {
   const [loop, setLoop] = useState<GeneratedLoop | null>(null);
   const [error, setError] = useState("");
   const [savedMsg, setSavedMsg] = useState("");
+  const [sections, setSections] = useState<{ name: string; chords: string[]; patternId: string }[]>([]);
 
   const toggleChord = (name: string) => {
     setSelected((s) => (s.includes(name) ? s.filter((c) => c !== name) : [...s, name]));
@@ -51,6 +52,34 @@ export default function CreatePage() {
       createdAt: Date.now(),
     });
     setSavedMsg("Saved to your creations.");
+  };
+
+  const SECTION_NAMES = ["Verse", "Chorus", "Bridge", "Outro"];
+  const addSection = () => {
+    if (!loop) return;
+    const name = SECTION_NAMES[sections.length] ?? `Section ${sections.length + 1}`;
+    setSections((s) => [...s, { name, chords: loop.chords, patternId: loop.patternId }]);
+    setSavedMsg("");
+  };
+  const removeSection = (i: number) => setSections((s) => s.filter((_, idx) => idx !== i));
+
+  const songChords = sections.flatMap((s) => s.chords);
+  const songHref =
+    sections.length > 0
+      ? `/practice?mode=play&chords=${songChords.join(",")}&pattern=${sections[0].patternId}&bpm=${bpm}`
+      : "#";
+  const saveSong = () => {
+    if (sections.length === 0) return;
+    addCreation({
+      id: crypto.randomUUID(),
+      name: `Song — ${sections.map((s) => s.name).join(" / ")}`,
+      chords: songChords,
+      patternId: sections[0].patternId,
+      bpm,
+      genre,
+      createdAt: Date.now(),
+    });
+    setSavedMsg("Song saved to your creations.");
   };
 
   const tempoPct = Math.round(((bpm - 50) / (140 - 50)) * 100);
@@ -153,7 +182,55 @@ export default function CreatePage() {
               Open in Practice →
             </Link>
           </div>
+          <button
+            onClick={addSection}
+            className="mt-3 w-full rounded-[13px] border border-dashed border-line bg-panel py-2.5 text-[13px] font-semibold text-muted transition hover:border-accent hover:text-fg"
+          >
+            ＋ Add as a section (build a verse/chorus song)
+          </button>
           {savedMsg && <p className="mt-3 text-center text-[13px] font-medium text-go">{savedMsg}</p>}
+        </div>
+      )}
+
+      {sections.length > 0 && (
+        <div className="mt-6 rounded-2xl border border-line bg-panel p-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">
+            Your song · {songChords.length} bars
+          </p>
+          <div className="mt-3 flex flex-col gap-2">
+            {sections.map((s, i) => (
+              <div key={i} className="flex items-center gap-3 rounded-[11px] border border-line bg-panel-2 p-2.5">
+                <span className="grid h-7 w-7 flex-none place-items-center rounded-full bg-accent/15 font-display text-[12px] font-bold text-accent-2">
+                  {i + 1}
+                </span>
+                <div className="min-w-0">
+                  <div className="text-[13.5px] font-semibold">{s.name}</div>
+                  <div className="truncate text-[12px] text-muted">{s.chords.join(" · ")}</div>
+                </div>
+                <button
+                  onClick={() => removeSection(i)}
+                  aria-label={`Remove ${s.name}`}
+                  className="ml-auto grid h-7 w-7 flex-none place-items-center rounded-full border border-line text-muted transition hover:text-pink"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 flex gap-3">
+            <button
+              onClick={saveSong}
+              className="flex-1 rounded-[13px] border border-line bg-panel py-3 text-[14px] font-semibold text-fg transition hover:border-accent"
+            >
+              Save song
+            </button>
+            <Link
+              href={songHref}
+              className="flex-1 rounded-[13px] bg-accent py-3 text-center text-[14px] font-semibold text-white transition hover:brightness-110"
+            >
+              Play full song →
+            </Link>
+          </div>
         </div>
       )}
 
