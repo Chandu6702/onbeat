@@ -14,6 +14,13 @@ export interface Chord {
   // Guitar shape, low-E to high-E: fret number, 0 = open, "x" = muted.
   shape: (number | "x")[];
   difficulty: Difficulty;
+  // Optional teaching data (chord detail pages). Aligned to `shape`, low-E to
+  // high-E: fretting finger 1–4 (1=index … 4=pinky), or null for open/muted.
+  fingers?: (number | null)[];
+  // One-line "how to fret this" coaching tip.
+  tip?: string;
+  // Common beginner mistakes for this shape.
+  mistakes?: string[];
 }
 
 export interface StrumPattern {

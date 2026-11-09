@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { usePracticeEngine } from "@/audio/usePracticeEngine";
-import { getPattern } from "@/data/patterns";
 import { CHORDS } from "@/data/chords";
 import type { Difficulty } from "@/data/types";
 import Fretboard from "@/components/Fretboard";
+import ChordDetail from "@/components/learn/ChordDetail";
 
 const FILTERS: { id: Difficulty | "all"; label: string }[] = [
   { id: "all", label: "All" },
@@ -18,14 +17,11 @@ const DIFF_LABEL: Record<Difficulty, string> = { easy: "Easy", med: "Medium", ha
 
 export default function ChordLibrary() {
   const [diff, setDiff] = useState<Difficulty | "all">("all");
-  const { previewChord } = usePracticeEngine({
-    bpm: 80,
-    progression: ["Em"],
-    pattern: getPattern("folk-down"),
-    mode: "metronome",
-    metronome: false,
-    countInBars: 0,
-  });
+  const [selected, setSelected] = useState<string | null>(null);
+
+  if (selected) {
+    return <ChordDetail name={selected} onBack={() => setSelected(null)} />;
+  }
 
   const chords = Object.values(CHORDS).filter((c) => diff === "all" || c.difficulty === diff);
 
@@ -52,7 +48,7 @@ export default function ChordLibrary() {
         {chords.map((c) => (
           <button
             key={c.name}
-            onClick={() => previewChord(c.name)}
+            onClick={() => setSelected(c.name)}
             className="rounded-[11px] border border-line bg-panel px-2.5 pb-2.5 pt-3 text-center transition-transform hover:border-accent active:scale-95"
           >
             <div className="mb-0.5 font-display text-[17px] font-bold">{c.name}</div>
@@ -66,7 +62,9 @@ export default function ChordLibrary() {
         ))}
       </div>
 
-      <p className="mt-4 text-center text-xs text-faint">Tap any chord to hear it.</p>
+      <p className="mt-4 text-center text-xs text-faint">
+        Tap any chord for finger positions, tips, and audio.
+      </p>
     </>
   );
 }
