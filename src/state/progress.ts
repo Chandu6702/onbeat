@@ -13,6 +13,8 @@ export interface Creation {
   createdAt: number;
 }
 
+export type PracticeGoal = "songs" | "smooth" | "chords" | "explore";
+
 interface ProgressState {
   knownChords: string[];
   xp: number;
@@ -21,12 +23,15 @@ interface ProgressState {
   dailyGoalMin: number;
   bestChangesPerMin: number;
   creations: Creation[];
+  onboarded: boolean;
+  goal: PracticeGoal | null;
 
   addXp: (n: number) => void;
   recordPractice: () => void;
   reportChanges: (perMin: number) => boolean; // returns true if new best
   toggleKnownChord: (name: string) => void;
   addCreation: (c: Creation) => void;
+  completeOnboarding: (chords: string[], goal: PracticeGoal | null) => void;
 }
 
 function todayStr(): string {
@@ -49,6 +54,8 @@ export const useProgress = create<ProgressState>()(
       dailyGoalMin: 10,
       bestChangesPerMin: 0,
       creations: [],
+      onboarded: false,
+      goal: null,
 
       addXp: (n) => set((s) => ({ xp: s.xp + n })),
 
@@ -81,8 +88,26 @@ export const useProgress = create<ProgressState>()(
         })),
 
       addCreation: (c) => set((s) => ({ creations: [c, ...s.creations] })),
+
+      completeOnboarding: (chords, goal) =>
+        set({
+          knownChords: chords.length > 0 ? chords : ["Em", "Am", "C", "G"],
+          goal,
+          onboarded: true,
+        }),
     }),
-    { name: "cadence-progress", version: 1 },
+    {
+      name: "cadence-progress",
+      version: 2,
+      // v1 users already have progress — don't show them onboarding.
+      migrate: (persisted, version) => {
+        const state = persisted as Partial<ProgressState>;
+        if (version < 2) {
+          return { ...state, onboarded: true, goal: state.goal ?? null };
+        }
+        return state;
+      },
+    },
   ),
 );
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import PlayAlong from "@/components/practice/PlayAlong";
 import ChangeDrill from "@/components/practice/ChangeDrill";
@@ -81,6 +82,41 @@ function PracticeInner() {
               </span>
             </button>
           ))}
+        </div>
+
+        <p className="mb-2 mt-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">
+          Before you play
+        </p>
+        <div className="grid gap-3">
+          <Link
+            href="/tuner"
+            className="flex w-full items-center gap-3.5 rounded-2xl border border-line bg-panel p-4 text-left transition-colors hover:border-accent"
+          >
+            <div className="grid h-12 w-12 flex-none place-items-center rounded-[13px] bg-gradient-to-br from-[#221f3d] to-[#191c2b] text-[23px]">
+              🎤
+            </div>
+            <div className="min-w-0">
+              <div className="text-[15px] font-semibold">Tuner</div>
+              <div className="mt-0.5 text-[12.5px] leading-snug text-muted">
+                Tune up with your mic before you start.
+              </div>
+            </div>
+            <span className="ml-auto text-[10.5px] font-bold uppercase text-beat">Mic</span>
+          </Link>
+          <Link
+            href="/about"
+            className="flex w-full items-center gap-3.5 rounded-2xl border border-line bg-panel p-4 text-left transition-colors hover:border-accent"
+          >
+            <div className="grid h-12 w-12 flex-none place-items-center rounded-[13px] bg-gradient-to-br from-[#221f3d] to-[#191c2b] text-[23px]">
+              💡
+            </div>
+            <div className="min-w-0">
+              <div className="text-[15px] font-semibold">About &amp; how-to</div>
+              <div className="mt-0.5 text-[12.5px] leading-snug text-muted">
+                How hands-free practice works.
+              </div>
+            </div>
+          </Link>
         </div>
       </>
     );

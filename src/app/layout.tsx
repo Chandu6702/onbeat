@@ -3,6 +3,7 @@ import { Sora, Inter } from "next/font/google";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
 import SideNav from "@/components/SideNav";
+import Onboarding from "@/components/Onboarding";
 
 const sora = Sora({
   variable: "--font-sora",
@@ -38,6 +39,7 @@ export default function RootLayout({
             <BottomNav />
           </div>
         </div>
+        <Onboarding />
       </body>
     </html>
   );

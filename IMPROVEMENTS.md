@@ -20,7 +20,9 @@ Reframing: the "tap a chord to hear it" button is only a *preview*. The real pro
 
 ## Tier 1 — highest impact (solves the core complaints)
 
-- [ ] **Built-in tuner (mic).** Needed before playing; genuinely hands-free. Effort: med.
+- [x] **Built-in tuner (mic).** Done: `/tuner` — mic pitch detection (autocorrelation),
+      note + cents needle, snaps to the nearest guitar string, graceful mic-permission
+      handling. Pure math in `audio/pitch.ts` (unit-tested). Sets up the mic UX for Listen mode.
 - [x] **Fix the change-drill for real playing.** ~~Tapping each change is the "can't hit
       buttons while playing" problem.~~ Done: count-in + auto-tempo mode — the loop switches
       chords for you on the beat, no tapping. Score is changes/min; honest self-report gates
@@ -28,8 +30,10 @@ Reframing: the "tap a chord to hear it" button is only a *preview*. The real pro
 - [x] **Chord detail pages.** Done: finger numbers on the diagram, finger-by-finger breakdown,
       how-to-fret tip, common mistakes, "Hear it" audio, and a "Practice this" deep-link.
       (`components/learn/ChordDetail.tsx`, data on `data/chords.ts`)
-- [ ] **About / How-to page + first-run onboarding.** Explain hands-free use; onboarding asks
-      which chords you know + your goal, so the app personalizes. Effort: low.
+- [x] **About / How-to page + first-run onboarding.** Done: `/about` explains hands-free use
+      and a good practice flow; a 3-step first-run overlay asks which chords you know + your
+      goal and seeds the store (with a persist migration so existing users skip it).
+      (`app/about/page.tsx`, `components/Onboarding.tsx`)
 - [x] **Performance mode.** Done: a fullscreen, high-contrast "Stand mode" on play-along —
       huge chord, next-chord cue, big beat + strum guide, auto-advancing. (`components/practice/PlayAlong.tsx`)
 
