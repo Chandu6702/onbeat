@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useProgress, useHasHydrated } from "@/state/progress";
 
 function Stat({ n, label, color }: { n: string | number; label: string; color?: string }) {
@@ -57,6 +58,31 @@ export default function ProfilePage() {
             {c}
           </span>
         ))}
+      </div>
+
+      <div className="mt-6 flex flex-col gap-2.5">
+        <Link
+          href="/settings"
+          className="flex items-center gap-3.5 rounded-2xl border border-line bg-panel p-4 transition-colors hover:border-accent"
+        >
+          <span className="text-xl">⚙️</span>
+          <div className="min-w-0">
+            <div className="text-[14.5px] font-semibold">Settings</div>
+            <div className="text-[12.5px] text-muted">Theme, left-handed, count-in, metronome.</div>
+          </div>
+          <span className="ml-auto text-accent-2">→</span>
+        </Link>
+        <Link
+          href="/about"
+          className="flex items-center gap-3.5 rounded-2xl border border-line bg-panel p-4 transition-colors hover:border-accent"
+        >
+          <span className="text-xl">💡</span>
+          <div className="min-w-0">
+            <div className="text-[14.5px] font-semibold">About &amp; how-to</div>
+            <div className="text-[12.5px] text-muted">How hands-free practice works.</div>
+          </div>
+          <span className="ml-auto text-accent-2">→</span>
+        </Link>
       </div>
 
       <p className="mt-6 text-center text-xs leading-relaxed text-faint">

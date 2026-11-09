@@ -5,6 +5,7 @@ import { usePracticeEngine } from "@/audio/usePracticeEngine";
 import { getChord } from "@/data/chords";
 import type { StrumPattern } from "@/data/types";
 import { useProgress, useHasHydrated } from "@/state/progress";
+import { useSettings } from "@/state/settings";
 import Fretboard from "@/components/Fretboard";
 
 // Ordered by the research-backed path: drill each transition as you add chords.
@@ -41,6 +42,8 @@ export default function ChangeDrill() {
   const addXp = useProgress((s) => s.addXp);
   const recordPractice = useProgress((s) => s.recordPractice);
   const hydrated = useHasHydrated();
+  const countInPref = useSettings((s) => s.countIn);
+  const metroVol = useSettings((s) => s.metronomeVolume);
 
   const pairs = CANDIDATE_PAIRS.filter((p) => p.every((c) => known.includes(c)));
   const [pair, setPair] = useState<[string, string]>(pairs[0] ?? ["Em", "Am"]);
@@ -55,14 +58,26 @@ export default function ChangeDrill() {
   const finished = useRef(false);
   const runFinalCount = useRef(0); // tempo is frozen mid-run, so capture at start
 
-  const { ui, play, stop, setBpm: setEngineBpm, setContent } = usePracticeEngine({
+  const {
+    ui,
+    play,
+    stop,
+    setBpm: setEngineBpm,
+    setContent,
+    setMetronomeVolume,
+    setCountIn,
+  } = usePracticeEngine({
     bpm: 80,
     progression: pair,
     pattern: DRILL_PATTERN,
     mode: "play",
     metronome: true,
-    countInBars: 2, // one 4/4 measure of clicks to get ready
+    countInBars: countInPref ? 2 : 0, // one 4/4 measure of clicks to get ready
+    metronomeVolume: metroVol,
   });
+
+  useEffect(() => setCountIn(countInPref ? 2 : 0), [countInPref, setCountIn]);
+  useEffect(() => setMetronomeVolume(metroVol), [metroVol, setMetronomeVolume]);
 
   const clearTimer = () => {
     if (timer.current) clearInterval(timer.current);

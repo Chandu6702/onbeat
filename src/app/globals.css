@@ -26,6 +26,25 @@
   color-scheme: dark;
 }
 
+/* Light theme — overrides the token variables the Tailwind utilities resolve.
+   The intentionally-dark "stage" surfaces (play-along card, stand mode) keep
+   their own hardcoded colors, like a media player. */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-ink: #f6f7fb;
+  --color-ink-2: #eef1f7;
+  --color-panel: #ffffff;
+  --color-panel-2: #f1f3fa;
+  --color-line: #e3e7f0;
+  --color-fg: #1a1d28;
+  --color-muted: #566072;
+  --color-faint: #8790a3;
+  --color-accent-2: #6a49ff;
+  --color-beat: #b06a00;
+  --color-go: #17a15f;
+  --color-pink: #d64d7e;
+}
+
 html,
 body {
   height: 100%;
@@ -39,6 +58,12 @@ body {
   color: var(--color-fg);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+}
+
+:root[data-theme="light"] body {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #e9edfb 0%, rgba(233, 237, 251, 0) 60%),
+    var(--color-ink);
 }
 
 @media (prefers-reduced-motion: reduce) {

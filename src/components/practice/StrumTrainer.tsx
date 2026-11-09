@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePracticeEngine } from "@/audio/usePracticeEngine";
 import { PATTERNS, getPattern } from "@/data/patterns";
 import { useProgress } from "@/state/progress";
+import { useSettings } from "@/state/settings";
 
 const CHORD = "Em"; // strumming trainer uses one easy chord so focus stays on the hand
 
@@ -13,17 +14,24 @@ export default function StrumTrainer() {
   const [metro, setMetro] = useState(true);
   const recorded = useRef(false);
   const recordPractice = useProgress((s) => s.recordPractice);
+  const countInPref = useSettings((s) => s.countIn);
+  const metroVol = useSettings((s) => s.metronomeVolume);
 
   const pattern = getPattern(patternId);
 
-  const { ui, toggle, stop, setBpm, setMetronome, setContent } = usePracticeEngine({
-    bpm: 80,
-    progression: [CHORD],
-    pattern: getPattern(PATTERNS[1].id),
-    mode: "play",
-    metronome: true,
-    countInBars: 1,
-  });
+  const { ui, toggle, stop, setBpm, setMetronome, setMetronomeVolume, setCountIn, setContent } =
+    usePracticeEngine({
+      bpm: 80,
+      progression: [CHORD],
+      pattern: getPattern(PATTERNS[1].id),
+      mode: "play",
+      metronome: true,
+      countInBars: countInPref ? 1 : 0,
+      metronomeVolume: metroVol,
+    });
+
+  useEffect(() => setCountIn(countInPref ? 1 : 0), [countInPref, setCountIn]);
+  useEffect(() => setMetronomeVolume(metroVol), [metroVol, setMetronomeVolume]);
 
   const choosePattern = (id: string) => {
     setPatternId(id);

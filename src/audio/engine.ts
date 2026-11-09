@@ -25,6 +25,8 @@ export interface EngineConfig {
   metronome: boolean;
   /** silent (metronome-only) lead-in bars before the chords start */
   countInBars: number;
+  /** metronome click loudness, 0..1 (default 1) */
+  metronomeVolume?: number;
 }
 
 const NOTE_SPREAD = 0.02; // seconds between strummed strings
@@ -99,7 +101,10 @@ export class PracticeEngine {
   }
 
   private playClick(time: number, accent: boolean) {
-    this.click.triggerAttackRelease(accent ? "C6" : "G5", "32n", time, accent ? 0.9 : 0.5);
+    const vol = this.cfg.metronomeVolume ?? 1;
+    const velocity = (accent ? 0.9 : 0.5) * vol;
+    if (velocity <= 0) return;
+    this.click.triggerAttackRelease(accent ? "C6" : "G5", "32n", time, velocity);
   }
 
   private playStrum(chordName: string, time: number, dir: StrumStep) {
@@ -160,6 +165,14 @@ export class PracticeEngine {
 
   setMetronome(on: boolean) {
     this.cfg.metronome = on;
+  }
+
+  setMetronomeVolume(v: number) {
+    this.cfg.metronomeVolume = v;
+  }
+
+  setCountIn(bars: number) {
+    this.cfg.countInBars = bars;
   }
 
   setMode(mode: EngineMode) {

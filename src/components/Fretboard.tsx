@@ -1,7 +1,13 @@
+"use client";
+
+import { useSettings } from "@/state/settings";
+import { useHasHydrated } from "@/state/progress";
+
 // A compact guitar chord diagram. shape is low-E to high-E:
 // fret number, 0 = open, "x" = muted. Everything scales off `size`, so the
 // same component renders a tiny library thumbnail or a large detail diagram.
 // Pass `fingers` (aligned to shape, 1–4) to print finger numbers inside dots.
+// Respects the left-handed setting (mirrors which string each marker sits on).
 export default function Fretboard({
   shape,
   size = 46,
@@ -11,6 +17,8 @@ export default function Fretboard({
   size?: number;
   fingers?: (number | null)[];
 }) {
+  const hydrated = useHasHydrated();
+  const lefty = useSettings((s) => s.lefty) && hydrated;
   const strings = 6;
   const frets = 4;
   const padX = size * 0.13;
@@ -59,7 +67,7 @@ export default function Fretboard({
       ))}
       {/* markers */}
       {shape.map((v, i) => {
-        const x = padX + i * sp;
+        const x = padX + (lefty ? strings - 1 - i : i) * sp;
         if (v === "x") {
           return (
             <text key={i} x={x} y={padY - openR} fill="#6a7290" fontSize={symFont} textAnchor="middle">

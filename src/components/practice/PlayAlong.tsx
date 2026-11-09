@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePracticeEngine } from "@/audio/usePracticeEngine";
 import { getPattern } from "@/data/patterns";
 import { DEMO_PROGRESSION } from "@/data/progressions";
 import { useProgress } from "@/state/progress";
+import { useSettings } from "@/state/settings";
 
 export default function PlayAlong({
   progression = DEMO_PROGRESSION,
@@ -23,15 +24,22 @@ export default function PlayAlong({
   const [stand, setStand] = useState(false);
   const recorded = useRef(false);
   const recordPractice = useProgress((s) => s.recordPractice);
+  const countInPref = useSettings((s) => s.countIn);
+  const metroVol = useSettings((s) => s.metronomeVolume);
 
-  const { ui, toggle, stop, setBpm, setMetronome } = usePracticeEngine({
-    bpm: startBpm,
-    progression,
-    pattern,
-    mode: "play",
-    metronome: true,
-    countInBars: 1,
-  });
+  const { ui, toggle, stop, setBpm, setMetronome, setMetronomeVolume, setCountIn } =
+    usePracticeEngine({
+      bpm: startBpm,
+      progression,
+      pattern,
+      mode: "play",
+      metronome: true,
+      countInBars: countInPref ? 1 : 0,
+      metronomeVolume: metroVol,
+    });
+
+  useEffect(() => setCountIn(countInPref ? 1 : 0), [countInPref, setCountIn]);
+  useEffect(() => setMetronomeVolume(metroVol), [metroVol, setMetronomeVolume]);
 
   const onToggle = () => {
     if (!ui.playing && !recorded.current) {
