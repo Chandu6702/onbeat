@@ -3,7 +3,7 @@
 A beginner-to-advanced guitar practice partner: **Learn**, **Practice**, **Create**, plus a
 **Music theory** track and a **Journey** level system. Built web-first with Next.js. Play-along
 audio uses real recorded guitar samples (CC-BY, see Attribution), pitch-shifted in the browser.
-See `PRODUCT-SPEC.md` and `BUILD-PLAN.md` for the full picture, `IMPROVEMENTS.md` for the roadmap,
+See `PRODUCT-SPEC.md` for the full picture,
 and `DEPLOYMENT.md` to ship it.
 
 ## Run it
