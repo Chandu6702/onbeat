@@ -10,7 +10,7 @@
 ## 1. Front-end hosting (always) — AWS Amplify Hosting
 
 ```
-GitHub (Chandu6702/onbeat) --push--> AWS Amplify Hosting --build--> static out/
+GitHub repo --push--> AWS Amplify Hosting --build--> static out/
                                               │
                                               ▼
                                      Amazon CloudFront (CDN + HTTPS) --> users

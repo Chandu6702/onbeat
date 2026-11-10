@@ -22,14 +22,14 @@ Do these once before the first deploy.
 
 ## Phase 1 — Ship the frontend on Render (free)
 
-You're using **Render**, so these are the primary steps. The app is fully static, so use a Render
+If you're using **Render**, these are the primary steps. The app is fully static, so use a Render
 **Static Site** — it's free, on a CDN, and (unlike a free Web Service) has **no cold starts**.
 
 ### Render — Static Site  ⭐ your setup
 
 1. Make sure Phase 0's `output: "export"` is set and pushed.
 2. [dashboard.render.com](https://dashboard.render.com) → **New → Static Site** → connect
-   `Chandu6702/cadence`.
+   `github repo`.
 3. Settings:
    - **Build command:** `npm install && npm run build`
    - **Publish directory:** `out`
@@ -101,6 +101,6 @@ Everything needed to go live and sync progress is **$0** except an optional cust
 ## Recommended path
 
 1. **Phase 0** checklist (enable `output: "export"`) → clean build.
-2. **Render Static Site** for the frontend — your setup, free, no cold starts. Live in minutes.
+2. **Render Static Site** for the frontend — setup is free, no cold starts. Live in minutes.
 3. When you want cross-device progress, follow **`SUPABASE_SETUP.md`** — it's already coded, just
-   add your keys. No backend server to run, no new hosting cost.
+   add keys. No backend server to run, no new hosting cost.
