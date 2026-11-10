@@ -1,21 +1,9 @@
 # Deployment plan — Onbeat (free tier)
 
-How to take Onbeat live for **$0**, then add accounts + cross-device sync later — also free.
-Written for the current build: Next.js 16, all client components, **no API routes or server
-actions**, so every route prerenders to static HTML (`14/14 ○ Static`). That makes hosting cheap
-and gives us the easiest possible first deploy.
-
-The GitHub repo is already at `github.com/Chandu6702/cadence`.
-
----
-
 ## Phase 0 — Pre-deploy checklist (~15 min)
 
 Do these once before the first deploy.
 
-- [x] **Name** — the app is **Onbeat** (renamed from the "Cadence" placeholder). The `C` logo mark
-      in `SideNav.tsx` / `page.tsx` / `Onboarding.tsx` can be swapped to an "O" or a real logo when
-      you have one.
 - [ ] **Confirm a clean build locally:**
       ```bash
       npm run lint && npm test && npm run build

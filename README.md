@@ -65,14 +65,3 @@ Desktop shows a left sidebar; below 768px it switches to a bottom tab bar.
 
 Guitar samples are from [nbrosowsky/tonejs-instruments](https://github.com/nbrosowsky/tonejs-instruments)
 (`guitar-acoustic` / `guitar-electric`), licensed **CC-BY**, served from the jsDelivr CDN.
-
-## Notes / not yet
-
-- **Guitar only** — the data layer is instrument-agnostic, so ukulele/piano is mostly new
-  shapes + samples.
-- **Accounts & cloud sync are built but off by default** — the app runs fully local until you add
-  Supabase keys; then progress syncs across devices. Turn it on with `SUPABASE_SETUP.md`.
-- **No real songs** — all loops are generated; no licensed tabs.
-- The app is named **Onbeat**. (The `localStorage` keys are still `cadence-*` on purpose — renaming
-  them would wipe saved progress. The GitHub repo slug `Chandu6702/cadence` can be renamed
-  separately on GitHub if you want.)

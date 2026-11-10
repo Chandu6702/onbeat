@@ -1,14 +1,5 @@
 # Supabase setup — accounts & cloud sync
 
-Cloud sync is **already coded** and ships turned off. The app runs fully locally until you add
-two environment variables; then a "Cloud sync" card appears on the Profile page and progress
-starts syncing across devices. Nothing here costs money (Supabase free tier).
-
-This doc is the operator's guide — follow it once to turn sync on, and come back to it when you
-want to change how it works.
-
----
-
 ## What's already built (so you know what to touch)
 
 | File | Role |

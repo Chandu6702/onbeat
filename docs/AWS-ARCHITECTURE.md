@@ -1,35 +1,16 @@
 # Onbeat on AWS — architecture & services
 
-A reference for deploying Onbeat **entirely on AWS**, and for talking through the architecture in
-an interview. This is a standalone doc — it doesn't change the free-tier setup in `DEPLOYMENT.md`
-(Render + Supabase), which stays as the quick/zero-cost path. On AWS we **do not use Supabase**;
-every piece is an AWS service.
-
-> Context: the app today is a **static front-end** (Next.js `output: "export"` — 14 prerendered
-> routes, no SSR, no API routes) and all progress is **local-first** in the browser. Cloud
-> sign-in/sync is optional. That shapes the two AWS targets below.
-
----
-
-## TL;DR
-
 | What you want | AWS services needed |
 |---|---|
 | **Just host the app** (local-only progress, no login) | **Amplify Hosting** — and nothing else. |
 | **Host it + login + cross-device sync, all on AWS** | Amplify Hosting **+ Cognito + API Gateway + Lambda + DynamoDB** (serverless). |
 | Same, but with a **Java/Spring Boot** backend (SE target stack) | Amplify Hosting **+ Cognito + ECS Fargate + RDS (PostgreSQL)**. |
-
-- If you only need to **show the app**, Amplify Hosting alone is enough — login just stays off.
-- If you want **login/sync on AWS**, you add a backend (Cognito for auth + an API + a database).
-  The recommended one for this app is **serverless**, because progress is a single JSON document
-  per user, which fits DynamoDB perfectly.
-
 ---
 
 ## 1. Front-end hosting (always) — AWS Amplify Hosting
 
 ```
-GitHub (Chandu6702/cadence) --push--> AWS Amplify Hosting --build--> static out/
+GitHub (Chandu6702/onbeat) --push--> AWS Amplify Hosting --build--> static out/
                                               │
                                               ▼
                                      Amazon CloudFront (CDN + HTTPS) --> users
@@ -159,41 +140,4 @@ Cognito + JWT resource server, ECR, IaC) for a system-design conversation.
 | DNS / TLS | Route 53 + ACM | Route 53 + ACM |
 | CI/CD | Amplify + SAM/CDK | CodePipeline / GitHub Actions + ECR |
 | IaC | AWS SAM / CDK / Terraform | Terraform / CDK |
-
-**Free tier (12 months):** Cognito (50k MAU, always free), Lambda (1M req/mo, always free),
-DynamoDB (25 GB + 25 RCU/WCU, always free), API Gateway (1M req/mo for 12 mo), Amplify build +
-hosting free tier. RDS/Fargate have 12-month free allowances but can incur small cost if left
-running — use them for a demo, then stop the cluster.
-
 ---
-
-## How to talk about it in an interview
-
-- **"How is it deployed?"** — Static Next.js export on a CDN. On AWS that's **Amplify Hosting**
-  (S3 + CloudFront). Progress is local-first; cloud sync is optional.
-- **"How would you do accounts/sync on AWS without a BaaS?"** — **Cognito** for auth, an
-  **API Gateway HTTP API** with a JWT authorizer, a **Lambda** that reads/merges/writes, and
-  **DynamoDB** keyed on the user's JWT `sub` (that's the isolation — a user can only reach their
-  own item). Serverless, scales to zero, pay-per-request.
-- **"And in Java?"** — Same Cognito auth; a **Spring Boot** API on **ECS Fargate** behind an
-  **ALB**, validating the Cognito JWT as an OAuth2 resource server, persisting to **RDS Postgres**
-  with Spring Data JPA. Build → **ECR** → ECS via CodePipeline.
-- **"Why DynamoDB over RDS?"** — Progress is a single document per user; no joins or cross-user
-  queries, so a key-value store is cheaper and zero-ops. I'd move to RDS only when a feature needs
-  SQL (leaderboards, analytics).
-- **"How does sync avoid data loss across devices?"** — Local-first writes, then a conservative
-  merge on sign-in: bests take the max, collections union, the practice log keeps the busier day
-  (`mergeProgress` in `src/state/progress.ts`). This stays identical no matter which backend runs.
-- **Trade-off:** Serverless = least ops, fastest, cheapest for this shape of data. Spring Boot +
-  RDS = more control and a relational model, at the cost of VPC/ALB/cluster management — the right
-  call once the data model grows beyond one document per user.
-
----
-
-## Bottom line
-
-- **To ship the resume project:** Amplify Hosting is enough on its own (login off), or use the
-  Render path in `DEPLOYMENT.md`.
-- **To make it full-stack on AWS with login:** add **Cognito + API Gateway + Lambda + DynamoDB**
-  (serverless) — no Supabase anywhere. The **Spring Boot + ECS + RDS** variant is the one aligned
-  with the Java/AWS interview target; keep it ready to whiteboard.

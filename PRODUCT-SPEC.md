@@ -1,6 +1,4 @@
-# Music Practice App — Product Spec
-
-_As of 2026-09-18_
+# Onbeat — Product Spec
 
 ## Vision & concept
 
@@ -105,74 +103,3 @@ This is the app's differentiator and its answer to licensing. Instead of _storin
 4. **A synced visual score** — the progression scrolls with a playhead; the current chord is highlighted and the next one is cued ahead of time so the player can prepare the change.
 
 **How the audio works (technically).** A scheduler drives a Web Audio timeline: a clock ticks at the BPM, and on each beat the engine triggers chord notes (from a small set of recorded instrument samples, pitch-shifted, or a synth) following the strumming pattern. Libraries like Tone.js handle precise scheduling and sampling in the browser; the same model ports to native audio engines on mobile. Everything — tempo, count-in, looping a section, muting the backing so only the click remains — falls out of this one timeline.
-
-**Why this is enough for v1.** Beginners don't need famous songs — they need _correct, in-tempo material using the chords they're learning_, repeated until it's clean. The engine delivers infinite such material for free.
-
-## Tech stack & architecture
-
-**Recommendation: build web-first, then wrap for mobile.** A web app is the fastest way to validate the core loop and audio, works on any device, and shares almost all its code with a later mobile build.
-
-**Suggested stack**
-
-- **Frontend:** React + TypeScript, Tailwind CSS for the sleek UI. (Or Next.js if you want easy hosting + a marketing page.)
-- **Audio:** Tone.js on top of the Web Audio API — scheduling, sampler, synth, metronome. This is the engine that makes the whole thing tick.
-- **State / storage:** start with local storage for progress; add a backend (e.g. Supabase or Firebase) when you want accounts, cross-device sync, and leaderboards.
-- **Mobile later:** React Native (Expo) reuses your React knowledge and most logic; the audio engine swaps to a native equivalent. Or wrap the web app with Capacitor for a fast first mobile release.
-
-**Core data model (instrument-agnostic by design).** Model everything as data so new instruments plug in without new code:
-
-- **Instrument** — name, tuning/layout, how a chord shape renders (fretboard vs keyboard), sample set.
-- **Chord** — name, the notes it contains, per-instrument fingering/shape, difficulty.
-- **StrummingPattern** — sequence of down/up/rest per beat, genre tags, difficulty.
-- **Progression** — ordered chords + a pattern + tempo + genre (generated or user-created).
-- **UserProgress** — known chords, XP, streak, personal bests, saved creations.
-
-Because chords are stored as _notes_, the audio engine can play any chord on any instrument, and adding ukulele, piano, or bass is mostly new shape-rendering + samples — not a rewrite.
-
-## MVP scope & roadmap
-
-Ship the smallest thing that proves the core loop feels good, then expand.
-
-**v1 — MVP (guitar only, web).** Prove: "generated play-along from the chords I know feels great to practice with."
-
-- Chord library for ~8 open chords with diagrams + audio.
-- Chord-change drill with 60-second count and personal best.
-- Strumming trainer with metronome + a few patterns.
-- Play-along on a generated progression (scrolling chords, highlighted current chord, synthesized backing, tempo control).
-- Basic Create: pick chords + pattern + tempo → generate a piece → play along.
-- Local progress: XP, streak, daily goal.
-
-**v2 — depth & retention.**
-
-- More chords (incl. barre/F), Medium/Hard content, more genres and patterns.
-- Suggested learning path with nudges.
-- Accounts + cross-device sync; richer stats and personal bests.
-- Better instrument samples and an optional drum groove.
-
-**v3 — breadth.**
-
-- Additional instruments (ukulele, piano, bass) via the data model.
-- Mobile app (React Native or Capacitor).
-- Mic-based chord/timing detection ("are you playing it right / in time?").
-- Public-domain / Creative Commons real songs and user import (ChordPro).
-- Social: shared creations, challenges, leaderboards.
-
-**Fastest path to feel it:** build the v1 play-along loop as a prototype first (done — see `index.html`), validate the feel, then layer the rest.
-
-## Open questions & risks
-
-**Decisions to make before/while building:**
-
-- **First instrument confirmed as guitar?** (Assumed yes, since that's what you're learning.)
-- **Web-first, or must it be a phone app from day one?** (Recommend web-first for speed; wrap later.)
-- **How real should the backing sound in v1?** A basic synth/sampled guitar is quick; realistic multi-instrument audio is more work. Recommend "good enough to practice with" first.
-- **Accounts in v1, or local-only?** Recommend local-only to ship faster; add accounts in v2.
-- **How prescriptive is the learning path?** Confirmed: suggested and nudging, never gating.
-
-**Risks & mitigations:**
-
-- **Audio timing must feel tight** — loose timing kills a rhythm app. Mitigation: build on a proven scheduler (Tone.js), test latency early, always give a visual + audible count-in.
-- **Generated music sounding "wrong"** — mitigation: constrain the engine to well-known, theory-safe progressions and patterns rather than free generation.
-- **Scope creep** — the vision is large. Mitigation: hold the line on the v1 loop; everything else waits.
-- **Mic detection is hard** — keep it out of v1; the app is fully useful without it (you play along by ear/eye).
-- **Motivation vs. pressure** — gamification should encourage, not shame. Keep streaks forgiving and goals adjustable.
